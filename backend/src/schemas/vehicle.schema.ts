@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { BODY_TYPES, FUEL_TYPES, MIN_YEAR, TRANSMISSIONS, maxYear } from "../constants/vehicle.js";
 
+// Mensajes por defecto de Zod en español (para los campos sin mensaje propio, ej: limit=999).
+z.config(z.locales.es());
+
 export const ALLOWED_SORT_FIELDS = ["listedAt", "price", "year", "mileage", "brand"] as const;
 
 // GET /api/v1/vehicles?page=1&limit=12 — los query params llegan como string: z.coerce los convierte.

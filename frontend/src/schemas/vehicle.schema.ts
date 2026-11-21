@@ -2,6 +2,9 @@
 import { z } from "zod";
 import { BODY_TYPES, FUEL_TYPES, TRANSMISSIONS, type Vehicle } from "../types/vehicle";
 
+// Mensajes por defecto de Zod en español (los campos con mensaje propio lo mantienen).
+z.config(z.locales.es());
+
 const MIN_YEAR = 1950;
 const MAX_YEAR = new Date().getFullYear() + 1;
 
