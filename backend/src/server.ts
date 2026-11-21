@@ -1,5 +1,6 @@
 // dotenv primero: los modulos que siguen leen variables de entorno apenas se importan.
 import "dotenv/config";
+import "./config/dns.js";
 import express, { Request, Response } from "express";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth.js";

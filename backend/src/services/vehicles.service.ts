@@ -29,7 +29,7 @@ export function createVehicle(input: CreateVehicleInput): Promise<IVehicleDocume
 }
 
 export function updateVehicle(id: string, input: UpdateVehicleInput): Promise<IVehicleDocument | null> {
-  return Vehicle.findByIdAndUpdate(id, input, { new: true, runValidators: true });
+  return Vehicle.findByIdAndUpdate(id, input, { returnDocument: "after", runValidators: true });
 }
 
 export function deleteVehicle(id: string): Promise<IVehicleDocument | null> {

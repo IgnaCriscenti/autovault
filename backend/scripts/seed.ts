@@ -2,6 +2,7 @@
 // Uso:  npm run seed            -> crea lo que falte (no duplica)
 //       npm run seed -- --reset -> borra los vehiculos y los vuelve a cargar
 import "dotenv/config";
+import "../src/config/dns.js";
 import mongoose from "mongoose";
 import { auth } from "../src/lib/auth.js";
 import { connectMongoDB, disconnectMongoDB } from "../src/config/db.js";
