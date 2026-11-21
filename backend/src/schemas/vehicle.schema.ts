@@ -6,13 +6,43 @@ z.config(z.locales.es());
 
 export const ALLOWED_SORT_FIELDS = ["listedAt", "price", "year", "mileage", "brand"] as const;
 
-// GET /api/v1/vehicles?page=1&limit=12 — los query params llegan como string: z.coerce los convierte.
-export const listVehiclesSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(50).default(12),
-  sortBy: z.enum(ALLOWED_SORT_FIELDS).default("listedAt"),
-  sortOrder: z.enum(["asc", "desc"]).default("desc"),
-});
+// Los query params siempre llegan como string: z.coerce los convierte a numero.
+const optionalNumber = (label: string) =>
+  z.coerce.number({ error: `${label} debe ser un numero` }).min(0, `${label} no puede ser negativo`).optional();
+
+// "true"/"false" -> boolean. (z.coerce.boolean() convertiria "false" en true.)
+const optionalBoolean = z
+  .enum(["true", "false"], { error: "Debe ser true o false" })
+  .transform((value) => value === "true")
+  .optional();
+
+// GET /api/v1/vehicles?search=toyota&bodyType=suv&maxPrice=30000&page=1&limit=12
+export const listVehiclesSchema = z
+  .object({
+    page: z.coerce.number().int().min(1).default(1),
+    limit: z.coerce.number().int().min(1).max(50).default(12),
+    sortBy: z.enum(ALLOWED_SORT_FIELDS).default("listedAt"),
+    sortOrder: z.enum(["asc", "desc"]).default("desc"),
+    // Busqueda libre: cada palabra tiene que aparecer en marca, modelo, color o descripcion.
+    search: z.string().trim().min(1).max(100).optional(),
+    brand: z.string().trim().min(1).max(50).optional(),
+    fuelType: z.enum(FUEL_TYPES).optional(),
+    transmission: z.enum(TRANSMISSIONS).optional(),
+    bodyType: z.enum(BODY_TYPES).optional(),
+    minPrice: optionalNumber("El precio minimo"),
+    maxPrice: optionalNumber("El precio maximo"),
+    minYear: optionalNumber("El año minimo"),
+    maxYear: optionalNumber("El año maximo"),
+    available: optionalBoolean,
+  })
+  .refine((q) => q.minPrice === undefined || q.maxPrice === undefined || q.minPrice <= q.maxPrice, {
+    message: "El precio minimo no puede ser mayor al maximo",
+    path: ["minPrice"],
+  })
+  .refine((q) => q.minYear === undefined || q.maxYear === undefined || q.minYear <= q.maxYear, {
+    message: "El año minimo no puede ser mayor al maximo",
+    path: ["minYear"],
+  });
 
 export const createVehicleSchema = z.object({
   brand: z.string({ error: "La marca es obligatoria" }).trim().min(1, "La marca es obligatoria").max(50),

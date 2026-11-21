@@ -58,13 +58,27 @@ Formato de error: `{ "error": { "message": "...", "details": { "campo": ["..."] 
 | Método | Ruta | Rol requerido | Respuestas |
 |---|---|---|---|
 | GET | `/api/v1/vehicles` | público | 200, 400 (query inválida) |
+| GET | `/api/v1/vehicles/brands` | público | 200 (marcas distintas, ordenadas) |
 | GET | `/api/v1/vehicles/:id` | público | 200, 400 (id inválido), 404 |
 | POST | `/api/v1/vehicles` | admin | 201, 400, 401, 403 |
 | PUT | `/api/v1/vehicles/:id` | admin | 200, 400, 401, 403, 404 |
 | PATCH | `/api/v1/vehicles/:id` | admin | 200, 400, 401, 403, 404 |
 | DELETE | `/api/v1/vehicles/:id` | admin | 204, 400, 401, 403, 404 |
 
-Query params de `GET /api/v1/vehicles`: `page` (default 1), `limit` (1-50, default 12), `sortBy` (`listedAt`, `price`, `year`, `mileage`, `brand`), `sortOrder` (`asc`, `desc`). Respuesta: `{ data: Vehicle[], meta: { total, page, limit, totalPages } }`.
+Query params de `GET /api/v1/vehicles` (todos opcionales, validados con Zod):
+
+| Param | Ejemplo | Descripción |
+|---|---|---|
+| `page`, `limit` | `page=2&limit=12` | Paginación (`limit` de 1 a 50, default 12) |
+| `sortBy`, `sortOrder` | `sortBy=price&sortOrder=asc` | Orden por `listedAt` (default), `price`, `year`, `mileage` o `brand` |
+| `search` | `search=toyota hilux` | Cada palabra debe aparecer en marca, modelo, color o descripción |
+| `brand` | `brand=ford` | Marca exacta (sin importar mayúsculas) |
+| `fuelType`, `transmission`, `bodyType` | `bodyType=suv` | Valores de los enums |
+| `minPrice`, `maxPrice` | `maxPrice=30000` | Rango de precio (USD) |
+| `minYear`, `maxYear` | `minYear=2022` | Rango de año |
+| `available` | `available=true` | `true` = disponibles, `false` = vendidos |
+
+Respuesta: `{ data: Vehicle[], meta: { total, page, limit, totalPages } }`.
 
 `PUT` y `PATCH` aceptan actualizaciones parciales (al menos un campo).
 

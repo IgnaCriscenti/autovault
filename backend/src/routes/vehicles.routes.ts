@@ -2,6 +2,7 @@
 import { Router } from "express";
 import {
   listVehicles,
+  listBrands,
   getVehicleById,
   createVehicle,
   updateVehicle,
@@ -17,6 +18,7 @@ const onlyAdmin = [authMiddleware, requireRole("admin")];
 
 // Lectura: publica
 router.get("/", validateQuery(listVehiclesSchema), listVehicles);
+router.get("/brands", listBrands); // antes de "/:id", si no "brands" se tomaria como id
 router.get("/:id", validateObjectId, getVehicleById);
 
 // Escritura: solo admin
