@@ -9,8 +9,8 @@ import Vehicle, { IVehicle } from "../src/models/Vehicle.js";
 
 // Credenciales PUBLICAS de prueba (van en el README para la correccion). No son secretos.
 const TEST_USERS = [
-  { name: "Admin AutoVitrina", email: "admin@autovitrina.com", password: "Admin1234!", role: "admin" },
-  { name: "Usuario AutoVitrina", email: "user@autovitrina.com", password: "User1234!", role: "user" },
+  { name: "Admin AutoVault", email: "admin@autovault.com", password: "Admin1234!", role: "admin" },
+  { name: "Usuario AutoVault", email: "user@autovault.com", password: "User1234!", role: "user" },
 ] as const;
 
 const daysAgo = (days: number): Date => new Date(Date.now() - days * 24 * 60 * 60 * 1000);
