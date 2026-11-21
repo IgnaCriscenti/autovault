@@ -8,8 +8,10 @@ TP2 de Metodologías y Desarrollos Web (UAI), tomando como referencia el reposit
 
 | Parte | URL |
 |---|---|
-| Frontend (Static Site) | _pendiente_ |
-| Backend (Web Service) | _pendiente_ |
+| Frontend (Static Site) | https://autovault-pv40.onrender.com |
+| Backend (Web Service) | https://autovault-api-f98z.onrender.com (ej: [`/health`](https://autovault-api-f98z.onrender.com/health)) |
+
+El frontend llama a la API por `/api` (rewrite del Static Site hacia el backend), nunca directo a la URL del backend.
 
 > El backend usa el plan gratuito de Render: si estuvo inactivo, la primera request puede tardar ~1 minuto mientras "despierta".
 
@@ -128,14 +130,14 @@ El frontend llama siempre a `/api` (mismo origen): en local lo resuelve el proxy
 - Build Command: `npm install --include=dev && npm run build`
 - Start Command: `npm start`
 - Health Check Path: `/health`
-- Variables: las del `.env.example` (`BETTER_AUTH_URL` = URL del frontend; OAuth App de GitHub de producción).
+- Variables: las del `.env.example` (`BETTER_AUTH_URL` = URL del frontend; OAuth App de GitHub de producción con callback `https://autovault-pv40.onrender.com/api/auth/callback/github`).
 
 **Frontend → Static Site**
 - Root Directory: `frontend`
 - Build Command: `npm install && npm run build`
 - Publish Directory: `dist`
 - Redirects/Rewrites (en este orden):
-  1. `/api/*` → `https://<backend>.onrender.com/api/*` (Rewrite)
+  1. `/api/*` → `https://autovault-api-f98z.onrender.com/api/*` (Rewrite)
   2. `/*` → `/index.html` (Rewrite)
 
 ## Estructura
