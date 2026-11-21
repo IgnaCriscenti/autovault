@@ -2,12 +2,25 @@
 import { createApi, type BaseQueryFn } from "@reduxjs/toolkit/query/react";
 import type { AxiosRequestConfig } from "axios";
 import { api as http, getErrorMessage } from "../lib/api";
-import type { Paginated, Vehicle } from "../types/vehicle";
+import type { BodyType, FuelType, Paginated, Transmission, Vehicle } from "../types/vehicle";
 import type { VehicleFormValues } from "../schemas/vehicle.schema";
 
+// Query params de GET /vehicles. Los undefined no se mandan (axios los omite).
 export interface VehiclesQuery {
   page?: number;
   limit?: number;
+  sortBy?: "listedAt" | "price" | "year" | "mileage" | "brand";
+  sortOrder?: "asc" | "desc";
+  search?: string;
+  brand?: string;
+  bodyType?: BodyType;
+  fuelType?: FuelType;
+  transmission?: Transmission;
+  minPrice?: number;
+  maxPrice?: number;
+  minYear?: number;
+  maxYear?: number;
+  available?: boolean;
 }
 
 // Usa la instancia de axios compartida. El error se guarda ya como string, listo para mostrar.
@@ -28,6 +41,10 @@ export const vehiclesApi = createApi({
   endpoints: (build) => ({
     getVehicles: build.query<Paginated<Vehicle>, VehiclesQuery>({
       query: (params) => ({ url: "/vehicles", params }),
+      providesTags: ["Vehicles"],
+    }),
+    getBrands: build.query<string[], void>({
+      query: () => ({ url: "/vehicles/brands" }),
       providesTags: ["Vehicles"],
     }),
     getVehicleById: build.query<Vehicle, string>({
@@ -51,6 +68,7 @@ export const vehiclesApi = createApi({
 
 export const {
   useGetVehiclesQuery,
+  useGetBrandsQuery,
   useGetVehicleByIdQuery,
   useCreateVehicleMutation,
   useUpdateVehicleMutation,
