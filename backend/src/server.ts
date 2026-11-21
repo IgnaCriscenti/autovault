@@ -1,14 +1,23 @@
 // dotenv primero: los modulos que siguen leen variables de entorno apenas se importan.
 import "dotenv/config";
 import express, { Request, Response } from "express";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./lib/auth.js";
 import v1Router from "./routes/index.js";
 import { connectMongoDB } from "./config/db.js";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
+// Render (y cualquier proxy) agrega X-Forwarded-*: confiar en el para IPs y protocolo correctos.
+app.set("trust proxy", 1);
+
 // Sin CORS: el front llama a /api en su mismo origen (proxy de Vite en local,
 // rewrite del Static Site en Render), asi que la cookie de sesion es first-party.
+
+// Better Auth ANTES de express.json(): su handler lee el body crudo.
+// "*splat" es el comodin de Express 5.
+app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use(express.json());
 
 app.use("/api/v1", v1Router);
