@@ -1,5 +1,5 @@
 // Ruta "/admin" (solo rol admin): ABM de vehiculos.
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { getErrorMessage } from "../lib/api";
 import type { VehicleFormValues } from "../schemas/vehicle.schema";
@@ -13,10 +13,28 @@ import type { Vehicle } from "../types/vehicle";
 import { VehicleForm } from "../components/admin/VehicleForm";
 import { AvailabilityBadge } from "../components/vehicles/VehicleCard";
 import { formatMileage, formatPrice } from "../lib/vehicle-format";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
+import { Pagination } from "../components/ui/Pagination";
+import { inputClass } from "../components/ui/Field";
+
+const PAGE_SIZE = 10;
 
 export const Admin = () => {
-  const { data, isLoading, error: loadError } = useGetVehiclesQuery({ limit: 50 });
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const debouncedSearch = useDebouncedValue(search.trim(), 400);
+  const { data, isLoading, isFetching, error: loadError } = useGetVehiclesQuery({
+    search: debouncedSearch || undefined,
+    page,
+    limit: PAGE_SIZE,
+  });
   const vehicles = data?.data ?? [];
+  const totalPages = data?.meta.totalPages ?? 0;
+
+  // Si se borra el ultimo vehiculo de la ultima pagina, volver a la anterior.
+  useEffect(() => {
+    if (totalPages > 0 && page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
   const [createVehicle] = useCreateVehicleMutation();
   const [updateVehicle] = useUpdateVehicleMutation();
   const [deleteVehicle, { error: deleteError }] = useDeleteVehicleMutation();
@@ -62,7 +80,24 @@ export const Admin = () => {
         </p>
       )}
 
-      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <input
+          type="search"
+          placeholder="Buscar en el catalogo..."
+          aria-label="Buscar vehiculos"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          className={`${inputClass} w-full sm:w-80`}
+        />
+        <span className="text-sm text-slate-500">{data ? `${data.meta.total} vehiculos` : ""}</span>
+      </div>
+
+      <div
+        className={`overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm transition-opacity ${isFetching ? "opacity-60" : ""}`}
+      >
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 text-xs uppercase text-slate-500">
             <tr>
@@ -111,13 +146,15 @@ export const Admin = () => {
             {!isLoading && vehicles.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-4 py-6 text-center text-slate-500">
-                  Todavia no hay vehiculos cargados.
+                  {debouncedSearch ? "No hay vehiculos que coincidan con la busqueda." : "Todavia no hay vehiculos cargados."}
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </section>
   );
 };
