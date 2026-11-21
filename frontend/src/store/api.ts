@@ -3,6 +3,7 @@ import { createApi, type BaseQueryFn } from "@reduxjs/toolkit/query/react";
 import type { AxiosRequestConfig } from "axios";
 import { api as http, getErrorMessage } from "../lib/api";
 import type { Paginated, Vehicle } from "../types/vehicle";
+import type { VehicleFormValues } from "../schemas/vehicle.schema";
 
 export interface VehiclesQuery {
   page?: number;
@@ -33,7 +34,25 @@ export const vehiclesApi = createApi({
       query: (id) => ({ url: `/vehicles/${id}` }),
       providesTags: ["Vehicles"],
     }),
+    createVehicle: build.mutation<Vehicle, VehicleFormValues>({
+      query: (data) => ({ url: "/vehicles", method: "POST", data }),
+      invalidatesTags: ["Vehicles"],
+    }),
+    updateVehicle: build.mutation<Vehicle, { id: string; values: VehicleFormValues }>({
+      query: ({ id, values }) => ({ url: `/vehicles/${id}`, method: "PUT", data: values }),
+      invalidatesTags: ["Vehicles"],
+    }),
+    deleteVehicle: build.mutation<void, string>({
+      query: (id) => ({ url: `/vehicles/${id}`, method: "DELETE" }),
+      invalidatesTags: ["Vehicles"],
+    }),
   }),
 });
 
-export const { useGetVehiclesQuery, useGetVehicleByIdQuery } = vehiclesApi;
+export const {
+  useGetVehiclesQuery,
+  useGetVehicleByIdQuery,
+  useCreateVehicleMutation,
+  useUpdateVehicleMutation,
+  useDeleteVehicleMutation,
+} = vehiclesApi;

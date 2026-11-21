@@ -1,10 +1,12 @@
-// Arbol de rutas centralizado (data router).
+// Arbol de rutas centralizado (data router). Niveles de acceso: publico y solo admin.
 import { createBrowserRouter } from "react-router";
 import { Layout } from "../layouts/Layout";
+import { ProtectedRoute } from "./ProtectedRoute";
 import { Home } from "../pages/Home";
 import { VehicleDetail } from "../pages/VehicleDetail";
 import { Login } from "../pages/Login";
 import { Register } from "../pages/Register";
+import { Admin } from "../pages/Admin";
 import { NotFound } from "../pages/NotFound";
 
 export const router = createBrowserRouter([
@@ -17,6 +19,12 @@ export const router = createBrowserRouter([
       { path: "vehicles/:id", element: <VehicleDetail /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+
+      // Solo admin: sin sesion -> /login, usuario comun -> "Sin permisos"
+      {
+        element: <ProtectedRoute roles={["admin"]} />,
+        children: [{ path: "admin", element: <Admin /> }],
+      },
 
       { path: "*", element: <NotFound /> },
     ],
