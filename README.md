@@ -62,10 +62,30 @@ Recurso REST: `/api/v1/vehicles`
 
 En las respuestas de lectura (`GET`), cada vehículo incluye además `ownerName`: el nombre de quien lo publicó (no el email, porque el listado es público).
 
+## Asesor virtual (agente de IA)
+
+Página **Asesor virtual** (`/asesor`, requiere sesión): un chat que recomienda autos del catálogo y gestiona las publicaciones propias. Es un agente de **LangChain** (`createAgent`, loop ReAct) con el modelo `openai/gpt-oss-20b` de **Groq**. La respuesta llega por **SSE** (se ve a medida que se escribe) y recuerda los últimos mensajes de la conversación para entender preguntas de seguimiento ("¿y cuál de esas es la más barata?").
+
+El modelo no accede a la base: usa **tools** (funciones con schema Zod) que llaman a los mismos services que la API REST:
+
+| Tool | Qué hace | Quién |
+|---|---|---|
+| `search_vehicles` | Busca con los mismos filtros que `GET /vehicles` (precio, marca, carrocería, combustible, año, disponibilidad, 3D) | cualquier usuario logueado |
+| `get_vehicle_detail` | Detalle de un vehículo (con descripción) | cualquier usuario logueado |
+| `list_brands` | Marcas del catálogo | cualquier usuario logueado |
+| `list_my_vehicles` | Publicaciones del usuario que chatea | cualquier usuario logueado |
+| `set_vehicle_availability` | Marca un vehículo como vendido o disponible | dueño o admin |
+| `request_vehicle_deletion` | **No elimina**: pide confirmación al usuario | dueño o admin |
+
+- **Permisos en el servidor:** el usuario sale de la sesión (no del mensaje) y llega a las tools como contexto, que el modelo no ve ni puede cambiar. Las tools de escritura aplican la misma regla que la API (dueño o admin), así que un mensaje ingenioso no puede saltear los permisos.
+- **Eliminar lo decide el humano:** la tool solo verifica permisos y el frontend muestra un cartel *"¿Eliminar el vehículo? Sí / No"*. Si el usuario confirma, el frontend llama a `DELETE /api/v1/vehicles/:id` (con los mismos permisos que en "Mis publicaciones").
+- **Límite gratuito de Groq:** el plan gratuito permite ~8000 tokens por minuto. Si se supera, el chat avisa que hay que esperar unos segundos.
+- `npm run agent:check` prueba las tools y los permisos con un modelo falso (sin gastar cuota de Groq).
+
 ## Stack
 
-- **Backend** (`backend/`): Node.js, Express 5, TypeScript, MongoDB (Mongoose), Zod, Better Auth (plugin `admin` para roles).
-- **Frontend** (`frontend/`): React 19, Vite, TypeScript, React Router, Redux Toolkit / RTK Query, React Hook Form + Zod, Tailwind CSS.
+- **Backend** (`backend/`): Node.js, Express 5, TypeScript, MongoDB (Mongoose), Zod, Better Auth (plugin `admin` para roles), LangChain + Groq (asesor virtual).
+- **Frontend** (`frontend/`): React 19, Vite, TypeScript, React Router, Redux Toolkit / RTK Query, React Hook Form + Zod, Tailwind CSS + shadcn/ui, react-markdown.
 
 ## API
 
@@ -90,7 +110,7 @@ Query params de `GET /api/v1/vehicles` (todos opcionales, validados con Zod):
 |---|---|---|
 | `page`, `limit` | `page=2&limit=12` | Paginación (`limit` de 1 a 50, default 12) |
 | `sortBy`, `sortOrder` | `sortBy=price&sortOrder=asc` | Orden por `listedAt` (default), `price`, `year`, `mileage` o `brand` |
-| `search` | `search=toyota hilux` | Cada palabra debe aparecer en marca, modelo, color o descripción |
+| `search` | `search=toyota hilux` | Cada palabra debe aparecer en marca, modelo, color o descripción (una palabra de 4 dígitos también busca por año: `corolla 2022`) |
 | `brand` | `brand=ford` | Marca exacta (sin importar mayúsculas) |
 | `fuelType`, `transmission`, `bodyType` | `bodyType=suv` | Valores de los enums |
 | `minPrice`, `maxPrice` | `maxPrice=30000` | Rango de precio (USD) |
@@ -118,6 +138,24 @@ Respuesta: `{ data: Vehicle[], meta: { total, page, limit, totalPages } }`.
 | POST | `/api/auth/admin/create-user` | admin | Crea un usuario con rol |
 
 Los endpoints `/api/auth/admin/*` los provee el plugin `admin` de Better Auth (401 sin sesión, 403 si no es admin). En el frontend se usan desde la página **Admin → Usuarios** con `authClient.admin.listUsers`, `setRole` y `createUser`.
+
+### Asesor virtual
+
+| Método | Ruta | Rol requerido | Respuestas |
+|---|---|---|---|
+| POST | `/api/v1/agent/chat` | sesión | 200 (stream SSE), 400, 401 |
+
+Body: `{ "message": "...", "history": [{ "role": "user" | "assistant", "content": "..." }] }` (mensaje de hasta 1000 caracteres; historial opcional, hasta 8 mensajes).
+
+La respuesta es `text/event-stream` con estos eventos:
+
+| Evento | Data | Significado |
+|---|---|---|
+| `tool` | `{ name, args }` | El agente llamó a una tool |
+| `token` | `{ text }` | Un pedazo de la respuesta |
+| `confirm_delete` | `{ vehicleId, vehicle }` | El front tiene que pedir confirmación para eliminar |
+| `error` | `{ message }` | Error del agente (ej: límite de Groq) |
+| `done` | `{}` | Fin de la respuesta |
 
 ### Otros
 
@@ -150,9 +188,11 @@ Variables de entorno (`backend/.env`):
 | `BETTER_AUTH_URL` | URL pública del **frontend** (local: `http://localhost:5173`) |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | OAuth App de GitHub. Callback: `<BETTER_AUTH_URL>/api/auth/callback/github` |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | OAuth Client de Google (Aplicación web). Redirect URI: `<BETTER_AUTH_URL>/api/auth/callback/google` |
+| `GROQ_API_KEY` | API key de Groq para el asesor virtual (gratis en [console.groq.com/keys](https://console.groq.com/keys)) |
+| `GROQ_MODEL` | Opcional. Modelo de Groq con tool calling (default `openai/gpt-oss-20b`) |
 | `DNS_SERVERS` | Opcional. Si Atlas falla con `querySrv ECONNREFUSED`, usar `8.8.8.8,1.1.1.1` |
 
-Scripts: `dev`, `build`, `start`, `typecheck`, `seed` (`npm run seed -- --reset` recarga los vehículos).
+Scripts: `dev`, `build`, `start`, `typecheck`, `seed` (`npm run seed -- --reset` recarga los vehículos), `agent:check` (prueba las tools del agente sin Groq).
 
 ### 2. Frontend
 
@@ -186,7 +226,9 @@ El frontend llama siempre a `/api` (mismo origen): en local lo resuelve el proxy
 ```
 backend/
   scripts/seed.ts        datos de prueba
+  scripts/agent-check.ts prueba de las tools del agente (modelo falso)
   src/
+    agent/               asesor virtual: modelo (Groq), prompt, contexto y tools
     config/              conexión a Mongo y DNS
     constants/           valores de los enums
     controllers/         capa HTTP
@@ -198,10 +240,10 @@ backend/
     services/            lógica de negocio y acceso a datos
 frontend/
   src/
-    components/          UI (formularios, tarjetas, auth)
+    components/          UI (shadcn/ui, formularios, tarjetas, auth, chat)
     layouts/             header + footer
-    lib/                 cliente de Better Auth, axios, formatos
-    pages/               Home, VehicleDetail, Login, Register, Admin
+    lib/                 cliente de Better Auth, axios, lector SSE, formatos
+    pages/               Home, VehicleDetail, Login, Register, MyVehicles, Advisor, Admin
     router/              rutas y ProtectedRoute
     schemas/             schemas Zod de formularios
     store/               Redux + RTK Query
