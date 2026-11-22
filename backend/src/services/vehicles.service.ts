@@ -30,10 +30,14 @@ function buildFilter(input: ListVehiclesInput): QueryFilter<IVehicle> {
   const filter: QueryFilter<IVehicle> = {};
 
   // Cada palabra debe aparecer en algun campo: "toyota hilux" encuentra la Toyota Hilux.
+  // Una palabra de 4 digitos tambien puede ser el año: "corolla 2022".
   if (search) {
-    filter.$and = search
-      .split(/\s+/)
-      .map((word) => ({ $or: SEARCH_FIELDS.map((field) => ({ [field]: { $regex: escapeRegex(word), $options: "i" } })) }));
+    filter.$and = search.split(/\s+/).map((word) => {
+      const byText: QueryFilter<IVehicle>[] = SEARCH_FIELDS.map((field) => ({
+        [field]: { $regex: escapeRegex(word), $options: "i" },
+      }));
+      return { $or: /^\d{4}$/.test(word) ? [...byText, { year: Number(word) }] : byText };
+    });
   }
   // Marca exacta sin importar mayusculas: "toyota" encuentra "Toyota".
   if (brand) filter.brand = { $regex: `^${escapeRegex(brand)}$`, $options: "i" };
