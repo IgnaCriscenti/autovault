@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { clearWelcome, markWelcomePending } from "../lib/welcome";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, Navigate, useLocation, useNavigate, type Location } from "react-router";
 import { Loader2Icon } from "lucide-react";
@@ -26,6 +28,10 @@ export const Login = () => {
   // A dónde volver después del login (lo deja ProtectedRoute en el state).
   const from = (location.state as { from?: Location } | null)?.from?.pathname ?? "/";
   const oauthError = new URLSearchParams(location.search).get("error");
+  // Si el login con Google/GitHub falló, no queda una bienvenida "pendiente".
+  useEffect(() => {
+    if (oauthError) clearWelcome();
+  }, [oauthError]);
 
   if (session && !isSubmitting) {
     return <Navigate to={from} replace />;
@@ -33,8 +39,10 @@ export const Login = () => {
 
   const onSubmit = async (credentials: LoginFormValues) => {
     // Better Auth no tira excepción: devuelve { data, error }. Si sale bien setea la cookie.
+    markWelcomePending();
     const { error } = await signIn.email(credentials);
     if (error) {
+      clearWelcome();
       setError("root.server", {
         message: error.status === 401 ? "Email o contraseña incorrectos" : (error.message ?? "No se pudo iniciar sesión"),
       });

@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { signIn } from "../../lib/auth-client";
 import { Button } from "@/components/ui/button";
+import { markWelcomePending } from "../../lib/welcome";
 
 type Provider = "github" | "google";
 
@@ -36,7 +37,10 @@ export const SocialButtons = ({ callbackURL }: { callbackURL: string }) => (
         variant="outline"
         size="lg"
         className="h-10"
-        onClick={() => signIn.social({ provider: id, callbackURL, errorCallbackURL: "/login" })}
+        onClick={() => {
+          markWelcomePending(); // al volver del proveedor se muestra el splash de bienvenida
+          signIn.social({ provider: id, callbackURL, errorCallbackURL: "/login" });
+        }}
       >
         {icon} {label}
       </Button>

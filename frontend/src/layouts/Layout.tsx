@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { UserMenu } from "@/components/layout/UserMenu";
+import { WelcomeSplash } from "@/components/brand/WelcomeSplash";
 
 const REPO_URL = "https://github.com/IgnaCriscenti/autovault";
 
@@ -42,6 +43,7 @@ export const Layout = () => {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <WelcomeSplash />
       <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
           <Link to="/" aria-label="AutoVault, ir al inicio" className="shrink-0">

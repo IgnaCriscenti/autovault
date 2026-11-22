@@ -5,6 +5,7 @@ import { Link, Navigate, useNavigate } from "react-router";
 import { Loader2Icon } from "lucide-react";
 import { registerSchema, type RegisterFormValues } from "../schemas/auth.schema";
 import { signUp, useSession } from "../lib/auth-client";
+import { clearWelcome, markWelcomePending } from "../lib/welcome";
 import { Button } from "@/components/ui/button";
 import { Field, FormError } from "@/components/ui/Field";
 import { AuthCard, Divider } from "../components/auth/AuthCard";
@@ -28,8 +29,10 @@ export const Register = () => {
   }
 
   const onSubmit = async ({ name, email, password }: RegisterFormValues) => {
+    markWelcomePending();
     const { error } = await signUp.email({ name, email, password });
     if (error) {
+      clearWelcome();
       setError("root.server", {
         message:
           error.code === "USER_ALREADY_EXISTS" || error.status === 422
