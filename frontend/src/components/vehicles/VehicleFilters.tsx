@@ -1,6 +1,7 @@
 // Barra de filtros del catalogo. Edita un "borrador" local y lo aplica con debounce,
 // asi escribir en la busqueda o en los precios no dispara una request por tecla.
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { ArrowUpDownIcon, SearchIcon, XIcon } from "lucide-react";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import {
   EMPTY_FILTERS,
@@ -13,7 +14,12 @@ import {
 import { BODY_LABELS, FUEL_LABELS, TRANSMISSION_LABELS } from "../../lib/vehicle-format";
 import { BODY_TYPES, FUEL_TYPES, TRANSMISSIONS } from "../../types/vehicle";
 import { useGetBrandsQuery } from "../../store/api";
-import { FieldWrapper, inputClass } from "../ui/Field";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 
 interface VehicleFiltersProps {
   value: Filters;
@@ -21,6 +27,13 @@ interface VehicleFiltersProps {
 }
 
 const serialize = (filters: Filters) => toSearchParams(filters).toString();
+
+const FilterField = ({ label, children }: { label: string; children: ReactNode }) => (
+  <Label className="grid gap-1.5 text-xs font-medium text-muted-foreground">
+    {label}
+    {children}
+  </Label>
+);
 
 export const VehicleFilters = ({ value, onChange }: VehicleFiltersProps) => {
   const { data: brands = [] } = useGetBrandsQuery();
@@ -47,144 +60,140 @@ export const VehicleFilters = ({ value, onChange }: VehicleFiltersProps) => {
   };
 
   return (
-    <section aria-label="Filtros" className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <Card aria-label="Filtros" className="gap-4 p-4">
       <div className="flex flex-col gap-3 sm:flex-row">
-        <input
-          type="search"
-          placeholder="Buscar por marca, modelo, color..."
-          aria-label="Buscar"
-          value={draft.search}
-          onChange={(e) => set("search", e.target.value)}
-          className={`${inputClass} flex-1`}
-        />
-        <select
-          aria-label="Ordenar por"
-          value={draft.sort}
-          onChange={(e) => set("sort", e.target.value as SortKey)}
-          className={inputClass}
-        >
-          {Object.entries(SORT_OPTIONS).map(([key, { label }]) => (
-            <option key={key} value={key}>
-              {label}
-            </option>
-          ))}
-        </select>
+        <div className="relative flex-1">
+          <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Buscar por marca, modelo, color..."
+            aria-label="Buscar"
+            value={draft.search}
+            onChange={(e) => set("search", e.target.value)}
+            className="h-10 bg-background pl-9"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <ArrowUpDownIcon className="size-4 shrink-0 text-muted-foreground" />
+          <NativeSelect
+            aria-label="Ordenar por"
+            value={draft.sort}
+            onChange={(e) => set("sort", e.target.value as SortKey)}
+            className="w-full sm:w-48 [&_select]:h-10"
+          >
+            {Object.entries(SORT_OPTIONS).map(([key, { label }]) => (
+              <NativeSelectOption key={key} value={key}>
+                {label}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
-        <FieldWrapper label="Marca">
-          <select value={draft.brand} onChange={(e) => set("brand", e.target.value)} className={inputClass}>
-            <option value="">Todas</option>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7 [&_select]:h-9 [&_select]:bg-background">
+        <FilterField label="Marca">
+          <NativeSelect value={draft.brand} onChange={(e) => set("brand", e.target.value)} className="w-full">
+            <NativeSelectOption value="">Todas</NativeSelectOption>
             {brands.map((brand) => (
-              <option key={brand} value={brand}>
+              <NativeSelectOption key={brand} value={brand}>
                 {brand}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
-        </FieldWrapper>
-        <FieldWrapper label="Carroceria">
-          <select
+          </NativeSelect>
+        </FilterField>
+        <FilterField label="Carroceria">
+          <NativeSelect
             value={draft.bodyType}
             onChange={(e) => set("bodyType", e.target.value as Filters["bodyType"])}
-            className={inputClass}
+            className="w-full"
           >
-            <option value="">Todas</option>
+            <NativeSelectOption value="">Todas</NativeSelectOption>
             {BODY_TYPES.map((v) => (
-              <option key={v} value={v}>
+              <NativeSelectOption key={v} value={v}>
                 {BODY_LABELS[v]}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
-        </FieldWrapper>
-        <FieldWrapper label="Combustible">
-          <select
+          </NativeSelect>
+        </FilterField>
+        <FilterField label="Combustible">
+          <NativeSelect
             value={draft.fuelType}
             onChange={(e) => set("fuelType", e.target.value as Filters["fuelType"])}
-            className={inputClass}
+            className="w-full"
           >
-            <option value="">Todos</option>
+            <NativeSelectOption value="">Todos</NativeSelectOption>
             {FUEL_TYPES.map((v) => (
-              <option key={v} value={v}>
+              <NativeSelectOption key={v} value={v}>
                 {FUEL_LABELS[v]}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
-        </FieldWrapper>
-        <FieldWrapper label="Transmision">
-          <select
+          </NativeSelect>
+        </FilterField>
+        <FilterField label="Transmision">
+          <NativeSelect
             value={draft.transmission}
             onChange={(e) => set("transmission", e.target.value as Filters["transmission"])}
-            className={inputClass}
+            className="w-full"
           >
-            <option value="">Todas</option>
+            <NativeSelectOption value="">Todas</NativeSelectOption>
             {TRANSMISSIONS.map((v) => (
-              <option key={v} value={v}>
+              <NativeSelectOption key={v} value={v}>
                 {TRANSMISSION_LABELS[v]}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
-        </FieldWrapper>
-        <FieldWrapper label="Precio min. (USD)">
-          <input
+          </NativeSelect>
+        </FilterField>
+        <FilterField label="Precio min. (USD)">
+          <Input
             type="number"
             min={0}
             step={1000}
             placeholder="0"
             value={draft.minPrice}
             onChange={(e) => set("minPrice", e.target.value)}
-            className={inputClass}
+            className="h-9 bg-background"
           />
-        </FieldWrapper>
-        <FieldWrapper label="Precio max. (USD)">
-          <input
+        </FilterField>
+        <FilterField label="Precio max. (USD)">
+          <Input
             type="number"
             min={0}
             step={1000}
             placeholder="Sin limite"
             value={draft.maxPrice}
             onChange={(e) => set("maxPrice", e.target.value)}
-            className={inputClass}
+            className="h-9 bg-background"
           />
-        </FieldWrapper>
-        <FieldWrapper label="Año desde">
-          <input
+        </FilterField>
+        <FilterField label="Año desde">
+          <Input
             type="number"
             min={1950}
             placeholder="Cualquiera"
             value={draft.minYear}
             onChange={(e) => set("minYear", e.target.value)}
-            className={inputClass}
+            className="h-9 bg-background"
           />
-        </FieldWrapper>
+        </FilterField>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-4">
-          <label className="flex items-center gap-2 text-sm text-slate-700">
-            <input
-              type="checkbox"
-              className="h-4 w-4"
-              checked={draft.onlyAvailable}
-              onChange={(e) => set("onlyAvailable", e.target.checked)}
-            />
+        <div className="flex flex-wrap items-center gap-5">
+          <Label className="text-sm font-normal">
+            <Checkbox checked={draft.onlyAvailable} onCheckedChange={(c) => set("onlyAvailable", c === true)} />
             Solo disponibles
-          </label>
-          <label className="flex items-center gap-2 text-sm text-slate-700">
-            <input
-              type="checkbox"
-              className="h-4 w-4"
-              checked={draft.only3d}
-              onChange={(e) => set("only3d", e.target.checked)}
-            />
+          </Label>
+          <Label className="text-sm font-normal">
+            <Checkbox checked={draft.only3d} onCheckedChange={(c) => set("only3d", c === true)} />
             Con vista 3D
-          </label>
+          </Label>
         </div>
         {hasActiveFilters(draft) && (
-          <button type="button" onClick={clear} className="text-sm font-medium text-brand-700 underline">
-            Limpiar filtros
-          </button>
+          <Button variant="ghost" size="sm" onClick={clear}>
+            <XIcon /> Limpiar filtros
+          </Button>
         )}
       </div>
-    </section>
+    </Card>
   );
 };

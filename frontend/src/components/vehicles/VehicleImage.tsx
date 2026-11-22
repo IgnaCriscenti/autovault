@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { CarFrontIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Foto del vehiculo, o un placeholder si no tiene imagen o la URL falla.
 export const VehicleImage = ({ src, alt, className = "" }: { src?: string; alt: string; className?: string }) => {
@@ -7,18 +9,26 @@ export const VehicleImage = ({ src, alt, className = "" }: { src?: string; alt: 
   if (!src || failed) {
     return (
       <div
-        className={`flex items-center justify-center bg-gradient-to-br from-brand-100 to-slate-200 text-brand-600 ${className}`}
+        className={cn(
+          "flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-brand-50 via-muted to-brand-100 text-brand-500",
+          className,
+        )}
         aria-label={alt}
         role="img"
       >
-        <svg viewBox="0 0 64 32" className="w-1/3 opacity-60" fill="currentColor" aria-hidden="true">
-          <path d="M4 22l4-9c1-3 3-4 6-4h22c3 0 5 1 7 3l6 6 8 2c2 .5 3 2 3 4v2a2 2 0 0 1-2 2h-4a6 6 0 0 0-12 0H22a6 6 0 0 0-12 0H6a2 2 0 0 1-2-2z" />
-          <circle cx="16" cy="26" r="4" />
-          <circle cx="50" cy="26" r="4" />
-        </svg>
+        <CarFrontIcon className="size-12 opacity-60" strokeWidth={1.5} />
+        <span className="text-xs font-medium text-muted-foreground">Sin foto</span>
       </div>
     );
   }
 
-  return <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} className={`object-cover ${className}`} />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      onError={() => setFailed(true)}
+      className={cn("bg-muted object-cover", className)}
+    />
+  );
 };

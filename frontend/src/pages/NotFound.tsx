@@ -1,11 +1,15 @@
 import { Link } from "react-router";
+import { LogoMark } from "@/components/brand/Logo";
+import { Button } from "@/components/ui/button";
 
 export const NotFound = () => (
-  <section className="py-16 text-center">
-    <p className="text-6xl font-bold text-brand-600">404</p>
-    <h2 className="mt-2 text-xl font-semibold">Pagina no encontrada</h2>
-    <Link to="/" className="mt-4 inline-block text-brand-700 underline">
-      Volver al catalogo
-    </Link>
+  <section className="flex flex-col items-center gap-4 py-16 text-center">
+    <LogoMark className="size-20 opacity-80" />
+    <p className="font-heading text-7xl font-bold text-primary">404</p>
+    <h1 className="text-2xl font-semibold">Esta pagina no esta en la boveda</h1>
+    <p className="text-muted-foreground">Puede que el link este mal o que la publicacion se haya eliminado.</p>
+    <Button asChild size="lg">
+      <Link to="/">Volver al catalogo</Link>
+    </Button>
   </section>
 );
