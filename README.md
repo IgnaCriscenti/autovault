@@ -92,6 +92,11 @@ Respuesta: `{ data: Vehicle[], meta: { total, page, limit, totalPages } }`.
 | GET | `/api/auth/callback/github` | público | Callback OAuth de GitHub |
 | GET | `/api/auth/get-session` | público | Sesión actual (`null` si no hay) |
 | POST | `/api/auth/sign-out` | sesión | Cierra la sesión (la borra de la base) |
+| GET | `/api/auth/admin/list-users` | admin | Lista usuarios (búsqueda por email/nombre, paginación) |
+| POST | `/api/auth/admin/set-role` | admin | Cambia el rol de un usuario (`user` o `admin`); no permite cambiar el propio |
+| POST | `/api/auth/admin/create-user` | admin | Crea un usuario con rol |
+
+Los endpoints `/api/auth/admin/*` los provee el plugin `admin` de Better Auth (401 sin sesión, 403 si no es admin). En el frontend se usan desde la página **Admin → Usuarios** con `authClient.admin.listUsers`, `setRole` y `createUser`.
 
 ### Otros
 

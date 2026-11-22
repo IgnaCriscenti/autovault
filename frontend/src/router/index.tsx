@@ -7,6 +7,7 @@ import { VehicleDetail } from "../pages/VehicleDetail";
 import { Login } from "../pages/Login";
 import { Register } from "../pages/Register";
 import { Admin } from "../pages/Admin";
+import { AdminUsers } from "../pages/AdminUsers";
 import { NotFound } from "../pages/NotFound";
 
 export const router = createBrowserRouter([
@@ -23,7 +24,15 @@ export const router = createBrowserRouter([
       // Solo admin: sin sesion -> /login, usuario comun -> "Sin permisos"
       {
         element: <ProtectedRoute roles={["admin"]} />,
-        children: [{ path: "admin", element: <Admin /> }],
+        children: [
+          {
+            path: "admin",
+            children: [
+              { index: true, element: <Admin /> },
+              { path: "users", element: <AdminUsers /> },
+            ],
+          },
+        ],
       },
 
       { path: "*", element: <NotFound /> },

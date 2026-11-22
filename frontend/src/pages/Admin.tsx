@@ -11,6 +11,7 @@ import {
 } from "../store/api";
 import type { Vehicle } from "../types/vehicle";
 import { VehicleForm } from "../components/admin/VehicleForm";
+import { AdminTabs } from "../components/admin/AdminTabs";
 import { AvailabilityBadge } from "../components/vehicles/VehicleCard";
 import { formatMileage, formatPrice } from "../lib/vehicle-format";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
@@ -71,6 +72,7 @@ export const Admin = () => {
         <h2 className="text-2xl font-semibold">Panel de administracion</h2>
         <p className="text-slate-500">Alta, edicion y baja de vehiculos del catalogo.</p>
       </div>
+      <AdminTabs />
 
       <VehicleForm vehicle={editing} onSave={handleSave} onCancel={() => setEditing(null)} />
 
