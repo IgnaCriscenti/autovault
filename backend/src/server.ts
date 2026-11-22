@@ -23,12 +23,24 @@ app.use(express.json());
 
 app.use("/api/v1", v1Router);
 
+// Raiz: este servicio es solo la API. Si alguien abre la URL del backend en el navegador,
+// se explica que es y a donde ir (en vez del "Cannot GET /" de Express).
+app.get("/", (_req: Request, res: Response) => {
+  res.json({
+    name: "AutoVault API",
+    description: "API REST de AutoVault. La aplicación web está en el frontend.",
+    frontend: process.env.BETTER_AUTH_URL, // la URL publica del front (la misma que usa Better Auth)
+    endpoints: { health: "/health", vehicles: "/api/v1/vehicles", brands: "/api/v1/vehicles/brands" },
+    repository: "https://github.com/IgnaCriscenti/autovault",
+  });
+});
+
 app.get("/health", (_req: Request, res: Response) => {
   res.json({ status: "ok", uptimeSeconds: process.uptime(), timestamp: new Date().toISOString() });
 });
 
-// Cualquier ruta /api que no exista: 404 en JSON (no el HTML por defecto de Express).
-app.use("/api", (_req: Request, res: Response) => {
+// Cualquier otra ruta que no exista: 404 en JSON (no el HTML por defecto de Express).
+app.use((_req: Request, res: Response) => {
   res.status(404).json({ error: { message: "Recurso no encontrado" } });
 });
 
