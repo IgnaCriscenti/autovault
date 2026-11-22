@@ -5,11 +5,17 @@ import { RouterProvider } from "react-router/dom";
 import "./index.css";
 import { store } from "./store";
 import { router } from "./router";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <TooltipProvider>
+        <RouterProvider router={router} />
+        {/* Notificaciones (toast.success / toast.error) de toda la app */}
+        <Toaster position="top-center" richColors closeButton />
+      </TooltipProvider>
     </Provider>
   </StrictMode>,
 );
