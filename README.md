@@ -24,6 +24,20 @@ El frontend llama a la API por `/api` (rewrite del Static Site hacia el backend)
 
 Todo usuario nuevo (registro con email o login con GitHub/Google) recibe el rol `user`.
 
+## Roles y permisos
+
+Se implementó el opcional **"cada usuario ve / edita solo sus propios registros"** (modalidad "Vendé tu auto"):
+
+| Acción | Visitante | `user` | `admin` |
+|---|---|---|---|
+| Ver catálogo y detalle | ✅ | ✅ | ✅ |
+| Publicar un vehículo (queda a su nombre) | ❌ | ✅ | ✅ |
+| Ver / editar / eliminar **sus** publicaciones ("Mis publicaciones") | ❌ | ✅ | ✅ |
+| Editar / eliminar publicaciones **de otros** | ❌ | ❌ (403) | ✅ |
+| Gestionar usuarios y cambiar roles | ❌ | ❌ (403) | ✅ |
+
+El dueño (`owner`) se toma siempre de la sesión en el backend, nunca del body. El control "dueño o admin" está en el middleware `requireVehicleOwnerOrAdmin`; la gestión de usuarios es solo para `admin` (plugin admin de Better Auth).
+
 ## Entidad elegida: `Vehicle`
 
 Recurso REST: `/api/v1/vehicles`
@@ -43,6 +57,7 @@ Recurso REST: `/api/v1/vehicles`
 | `imageUrl` | texto (URL) | Opcional, `http(s)://...` |
 | `available` | booleano | `true` = disponible, `false` = vendido |
 | `listedAt` | fecha | Fecha de publicación |
+| `owner` | texto | Id del usuario que lo publicó (lo asigna el backend) |
 
 ## Stack
 
@@ -59,11 +74,12 @@ Formato de error: `{ "error": { "message": "...", "details": { "campo": ["..."] 
 |---|---|---|---|
 | GET | `/api/v1/vehicles` | público | 200, 400 (query inválida) |
 | GET | `/api/v1/vehicles/brands` | público | 200 (marcas distintas, ordenadas) |
+| GET | `/api/v1/vehicles/mine` | sesión | 200, 400, 401 (publicaciones propias; mismos query params) |
 | GET | `/api/v1/vehicles/:id` | público | 200, 400 (id inválido), 404 |
-| POST | `/api/v1/vehicles` | admin | 201, 400, 401, 403 |
-| PUT | `/api/v1/vehicles/:id` | admin | 200, 400, 401, 403, 404 |
-| PATCH | `/api/v1/vehicles/:id` | admin | 200, 400, 401, 403, 404 |
-| DELETE | `/api/v1/vehicles/:id` | admin | 204, 400, 401, 403, 404 |
+| POST | `/api/v1/vehicles` | sesión (queda como dueño) | 201, 400, 401 |
+| PUT | `/api/v1/vehicles/:id` | dueño o admin | 200, 400, 401, 403, 404 |
+| PATCH | `/api/v1/vehicles/:id` | dueño o admin | 200, 400, 401, 403, 404 |
+| DELETE | `/api/v1/vehicles/:id` | dueño o admin | 204, 400, 401, 403, 404 |
 
 Query params de `GET /api/v1/vehicles` (todos opcionales, validados con Zod):
 

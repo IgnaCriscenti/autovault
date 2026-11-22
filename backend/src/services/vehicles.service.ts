@@ -36,9 +36,11 @@ function buildFilter(input: ListVehiclesInput): QueryFilter<IVehicle> {
   return filter;
 }
 
-export async function listVehicles(input: ListVehiclesInput): Promise<Paginated<IVehicleDocument>> {
+// ownerId: si viene, lista solo las publicaciones de ese usuario ("mis publicaciones").
+export async function listVehicles(input: ListVehiclesInput, ownerId?: string): Promise<Paginated<IVehicleDocument>> {
   const { page, limit, sortBy, sortOrder } = input;
   const filter = buildFilter(input);
+  if (ownerId) filter.owner = ownerId;
 
   const [data, total] = await Promise.all([
     Vehicle.find(filter)
@@ -62,8 +64,8 @@ export function findVehicleById(id: string): Promise<IVehicleDocument | null> {
   return Vehicle.findById(id);
 }
 
-export function createVehicle(input: CreateVehicleInput): Promise<IVehicleDocument> {
-  return Vehicle.create(input);
+export function createVehicle(input: CreateVehicleInput, ownerId: string): Promise<IVehicleDocument> {
+  return Vehicle.create({ ...input, owner: ownerId });
 }
 
 export function updateVehicle(id: string, input: UpdateVehicleInput): Promise<IVehicleDocument | null> {

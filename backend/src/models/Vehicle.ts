@@ -23,6 +23,7 @@ export interface IVehicle {
   imageUrl?: string;
   available: boolean;
   listedAt: Date;
+  owner: string; // id (Better Auth) del usuario que publico el vehiculo
 }
 
 // HydratedDocument en vez de `extends Document`: el campo `model` choca con una propiedad
@@ -44,6 +45,8 @@ const vehicleSchema = new Schema<IVehicle>(
     imageUrl: { type: String, trim: true },
     available: { type: Boolean, default: true },
     listedAt: { type: Date, default: () => new Date() },
+    // Se asigna SIEMPRE desde la sesion en el backend (nunca desde el body). Indexado para "mis publicaciones".
+    owner: { type: String, required: true, index: true },
   },
   { timestamps: true }
 );

@@ -26,6 +26,16 @@ export async function listVehicles(_req: Request, res: Response): Promise<void> 
   }
 }
 
+// GET /api/v1/vehicles/mine — mismas opciones que el listado, pero solo las publicaciones del usuario logueado.
+export async function listMyVehicles(req: Request, res: Response): Promise<void> {
+  try {
+    const query = res.locals.query as ListVehiclesInput;
+    res.status(200).json(await vehiclesService.listVehicles(query, req.user!.id));
+  } catch (error) {
+    handleError(res, error, "listar");
+  }
+}
+
 // GET /api/v1/vehicles/brands
 export async function listBrands(_req: Request, res: Response): Promise<void> {
   try {
@@ -50,16 +60,16 @@ export async function getVehicleById(req: Request<{ id: string }>, res: Response
   }
 }
 
-// POST /api/v1/vehicles
+// POST /api/v1/vehicles — el dueño es el usuario de la sesion (Zod descarta un "owner" en el body).
 export async function createVehicle(req: Request<{}, {}, CreateVehicleInput>, res: Response): Promise<void> {
   try {
-    res.status(201).json(await vehiclesService.createVehicle(req.body));
+    res.status(201).json(await vehiclesService.createVehicle(req.body, req.user!.id));
   } catch (error) {
     handleError(res, error, "crear");
   }
 }
 
-// PUT / PATCH /api/v1/vehicles/:id
+// PUT / PATCH /api/v1/vehicles/:id (requireVehicleOwnerOrAdmin ya verifico existencia y permisos)
 export async function updateVehicle(
   req: Request<{ id: string }, {}, UpdateVehicleInput>,
   res: Response
