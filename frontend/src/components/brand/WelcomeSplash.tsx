@@ -53,7 +53,7 @@ export const WelcomeSplash = () => {
         <Logo size="lg" tagline />
       </div>
       <p className="animate-in font-heading text-2xl font-semibold text-foreground delay-500 duration-500 fill-mode-backwards fade-in slide-in-from-bottom-2">
-        ¡Hola, {firstName}! 👋
+        ¡Hola, {firstName}!
       </p>
       <span className="absolute bottom-8 text-xs text-muted-foreground">Tocá para continuar</span>
     </div>
