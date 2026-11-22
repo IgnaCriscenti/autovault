@@ -1,15 +1,22 @@
-// Guarda de rutas: sin sesion -> /login; con sesion pero sin el rol pedido -> pantalla "sin permisos".
+// Guarda de rutas: sin sesión -> /login; con sesión pero sin el rol pedido -> pantalla "Sin permisos".
 import { Link, Navigate, Outlet, useLocation } from "react-router";
+import { Loader2Icon, ShieldAlertIcon } from "lucide-react";
 import { useSession } from "../lib/auth-client";
 import type { UserRole } from "../types/auth";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export const ProtectedRoute = ({ roles }: { roles?: UserRole[] }) => {
-  // isPending: true hasta que responde /api/auth/get-session (por ej. justo despues de un F5).
+  // isPending: true hasta que responde /api/auth/get-session (por ej. justo después de un F5).
   const { data: session, isPending } = useSession();
   const location = useLocation();
 
   if (isPending) {
-    return <p className="text-slate-500">Verificando sesion...</p>;
+    return (
+      <p className="flex items-center justify-center gap-2 py-16 text-muted-foreground">
+        <Loader2Icon className="size-4 animate-spin" /> Verificando sesión...
+      </p>
+    );
   }
 
   if (!session) {
@@ -18,13 +25,16 @@ export const ProtectedRoute = ({ roles }: { roles?: UserRole[] }) => {
 
   if (roles && !roles.includes(session.user.role as UserRole)) {
     return (
-      <section className="mx-auto mt-8 max-w-md rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center">
-        <h2 className="text-lg font-semibold text-amber-900">Sin permisos</h2>
-        <p className="mt-1 text-sm text-amber-800">Esta seccion es solo para administradores.</p>
-        <Link to="/" className="mt-4 inline-block text-sm font-medium text-brand-700 underline">
-          Volver al catalogo
-        </Link>
-      </section>
+      <Card className="mx-auto mt-8 max-w-md items-center gap-3 p-8 text-center">
+        <span className="flex size-14 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+          <ShieldAlertIcon className="size-7" />
+        </span>
+        <h1 className="text-xl font-semibold">Sin permisos</h1>
+        <p className="text-muted-foreground">Esta sección es solo para administradores.</p>
+        <Button asChild className="mt-2">
+          <Link to="/">Volver al catálogo</Link>
+        </Button>
+      </Card>
     );
   }
 

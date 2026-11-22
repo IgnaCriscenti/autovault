@@ -1,10 +1,12 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, Navigate, useLocation, useNavigate, type Location } from "react-router";
+import { Loader2Icon } from "lucide-react";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import { signIn, useSession } from "../lib/auth-client";
-import { Field, FormError } from "../components/ui/Field";
-import { AuthCard, Divider, primaryButton } from "../components/auth/AuthCard";
+import { Button } from "@/components/ui/button";
+import { Field, FormError } from "@/components/ui/Field";
+import { AuthCard, Divider } from "../components/auth/AuthCard";
 import { SocialButtons } from "../components/auth/SocialButtons";
 
 export const Login = () => {
@@ -21,7 +23,7 @@ export const Login = () => {
     defaultValues: { email: "", password: "" },
   });
 
-  // A donde volver despues del login (lo deja ProtectedRoute en el state).
+  // A dónde volver después del login (lo deja ProtectedRoute en el state).
   const from = (location.state as { from?: Location } | null)?.from?.pathname ?? "/";
   const oauthError = new URLSearchParams(location.search).get("error");
 
@@ -30,11 +32,11 @@ export const Login = () => {
   }
 
   const onSubmit = async (credentials: LoginFormValues) => {
-    // Better Auth no tira excepcion: devuelve { data, error }. Si sale bien setea la cookie.
+    // Better Auth no tira excepción: devuelve { data, error }. Si sale bien setea la cookie.
     const { error } = await signIn.email(credentials);
     if (error) {
       setError("root.server", {
-        message: error.status === 401 ? "Email o contraseña incorrectos" : (error.message ?? "No se pudo iniciar sesion"),
+        message: error.status === 401 ? "Email o contraseña incorrectos" : (error.message ?? "No se pudo iniciar sesión"),
       });
       return;
     }
@@ -42,16 +44,20 @@ export const Login = () => {
   };
 
   return (
-    <AuthCard title="Iniciar sesion">
+    <AuthCard title="Iniciar sesión" description="Bienvenido de nuevo. Ingresá para gestionar tus publicaciones.">
       {oauthError && (
-        <p role="alert" className="mb-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
-          {oauthError === "account_not_linked"
-            ? "Ya existe una cuenta con ese email. Ingresa con tu contraseña."
-            : "No se pudo iniciar sesion con el proveedor externo."}
-        </p>
+        <FormError
+          message={
+            oauthError === "account_not_linked"
+              ? "Ya existe una cuenta con ese email. Ingresá con tu contraseña."
+              : "No se pudo iniciar sesión con el proveedor externo."
+          }
+        />
       )}
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-3">
-        <Field label="Email" type="email" autoComplete="email" error={errors.email?.message} {...register("email")} />
+      <SocialButtons callbackURL={from} />
+      <Divider label="o con tu email" />
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
+        <Field label="Email" type="email" autoComplete="email" placeholder="vos@email.com" error={errors.email?.message} {...register("email")} />
         <Field
           label="Contraseña"
           type="password"
@@ -60,15 +66,14 @@ export const Login = () => {
           {...register("password")}
         />
         <FormError message={errors.root?.server?.message} />
-        <button type="submit" disabled={isSubmitting} className={primaryButton}>
+        <Button type="submit" size="lg" disabled={isSubmitting} className="h-10">
+          {isSubmitting && <Loader2Icon className="animate-spin" />}
           {isSubmitting ? "Ingresando..." : "Ingresar"}
-        </button>
+        </Button>
       </form>
-      <Divider />
-      <SocialButtons callbackURL={from} />
-      <p className="mt-4 text-center text-sm text-slate-600">
-        ¿No tenes cuenta?{" "}
-        <Link to="/register" className="font-medium text-brand-700 underline">
+      <p className="text-center text-sm text-muted-foreground">
+        ¿No tenés cuenta?{" "}
+        <Link to="/register" className="font-medium text-primary hover:underline">
           Crear cuenta
         </Link>
       </p>

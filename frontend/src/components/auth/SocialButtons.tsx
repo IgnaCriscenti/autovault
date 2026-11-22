@@ -2,7 +2,7 @@
 // y manda al callbackURL. Si falla, vuelve a /login?error=<codigo>.
 import type { ReactNode } from "react";
 import { signIn } from "../../lib/auth-client";
-import { secondaryButton } from "./AuthCard";
+import { Button } from "@/components/ui/button";
 
 type Provider = "github" | "google";
 
@@ -23,21 +23,23 @@ const GoogleIcon = () => (
 );
 
 const PROVIDERS: { id: Provider; label: string; icon: ReactNode }[] = [
-  { id: "google", label: "Entrar con Google", icon: <GoogleIcon /> },
-  { id: "github", label: "Entrar con GitHub", icon: <GithubIcon /> },
+  { id: "google", label: "Google", icon: <GoogleIcon /> },
+  { id: "github", label: "GitHub", icon: <GithubIcon /> },
 ];
 
 export const SocialButtons = ({ callbackURL }: { callbackURL: string }) => (
-  <div className="flex flex-col gap-2">
+  <div className="grid grid-cols-2 gap-2">
     {PROVIDERS.map(({ id, label, icon }) => (
-      <button
+      <Button
         key={id}
         type="button"
+        variant="outline"
+        size="lg"
+        className="h-10"
         onClick={() => signIn.social({ provider: id, callbackURL, errorCallbackURL: "/login" })}
-        className={secondaryButton}
       >
         {icon} {label}
-      </button>
+      </Button>
     ))}
   </div>
 );
