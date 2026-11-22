@@ -9,6 +9,7 @@ import { Register } from "../pages/Register";
 import { Admin } from "../pages/Admin";
 import { AdminUsers } from "../pages/AdminUsers";
 import { NotFound } from "../pages/NotFound";
+import { Privacy } from "../pages/Privacy";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { path: "vehicles/:id", element: <VehicleDetail /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "privacidad", element: <Privacy /> },
 
       // Solo admin: sin sesion -> /login, usuario comun -> "Sin permisos"
       {
