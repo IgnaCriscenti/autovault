@@ -12,10 +12,6 @@ interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
   hint?: string;
 }
 
-// Estilo de input de shadcn para controles nativos que todavia no usan un componente propio.
-export const inputClass =
-  "h-9 w-full min-w-0 rounded-lg border border-input bg-background px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive";
-
 export const FieldError =({ message }: { message?: string }) =>
   message ? <p className="text-xs font-medium text-destructive">{message}</p> : null;
 
