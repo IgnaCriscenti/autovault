@@ -45,10 +45,17 @@ export const auth = betterAuth({
       clientId: requireEnv("GITHUB_CLIENT_ID"),
       clientSecret: requireEnv("GITHUB_CLIENT_SECRET"),
     },
+    google: {
+      clientId: requireEnv("GOOGLE_CLIENT_ID"),
+      clientSecret: requireEnv("GOOGLE_CLIENT_SECRET"),
+      // Siempre muestra el selector de cuentas de Google (util si hay varias cuentas en el navegador).
+      prompt: "select_account",
+    },
   },
-  // Si alguien registrado con email+password entra con GitHub (mismo email), se unen las cuentas.
+  // Si alguien registrado con email+password entra con GitHub o Google (mismo email), se unen las
+  // cuentas. Seguro porque ambos proveedores solo devuelven emails verificados.
   account: {
-    accountLinking: { trustedProviders: ["github"] },
+    accountLinking: { trustedProviders: ["github", "google"] },
   },
   // admin(): agrega user.role ("user" por defecto) y endpoints para gestionar usuarios y roles
   // (/admin/list-users, /admin/set-role, /admin/create-user...), solo accesibles para rol "admin".

@@ -22,7 +22,7 @@ El frontend llama a la API por `/api` (rewrite del Static Site hacia el backend)
 | admin | `admin@autovault.com` | `Admin1234!` |
 | user | `user@autovault.com` | `User1234!` |
 
-Todo usuario nuevo (registro con email o login con GitHub) recibe el rol `user`.
+Todo usuario nuevo (registro con email o login con GitHub/Google) recibe el rol `user`.
 
 ## Entidad elegida: `Vehicle`
 
@@ -88,8 +88,9 @@ Respuesta: `{ data: Vehicle[], meta: { total, page, limit, totalPages } }`.
 |---|---|---|---|
 | POST | `/api/auth/sign-up/email` | público | Registro con nombre, email y contraseña |
 | POST | `/api/auth/sign-in/email` | público | Login con email y contraseña |
-| POST | `/api/auth/sign-in/social` | público | Login con GitHub (`{ "provider": "github" }`) |
+| POST | `/api/auth/sign-in/social` | público | Login con GitHub o Google (`{ "provider": "github" \| "google" }`) |
 | GET | `/api/auth/callback/github` | público | Callback OAuth de GitHub |
+| GET | `/api/auth/callback/google` | público | Callback OAuth de Google |
 | GET | `/api/auth/get-session` | público | Sesión actual (`null` si no hay) |
 | POST | `/api/auth/sign-out` | sesión | Cierra la sesión (la borra de la base) |
 | GET | `/api/auth/admin/list-users` | admin | Lista usuarios (búsqueda por email/nombre, paginación) |
@@ -106,7 +107,7 @@ Los endpoints `/api/auth/admin/*` los provee el plugin `admin` de Better Auth (4
 
 ## Correr en local
 
-Requisitos: Node.js 24, una base en MongoDB Atlas y una OAuth App de GitHub.
+Requisitos: Node.js 24, una base en MongoDB Atlas, una OAuth App de GitHub y un OAuth Client de Google.
 
 ### 1. Backend
 
@@ -128,6 +129,7 @@ Variables de entorno (`backend/.env`):
 | `BETTER_AUTH_SECRET` | Secreto de sesiones: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
 | `BETTER_AUTH_URL` | URL pública del **frontend** (local: `http://localhost:5173`) |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | OAuth App de GitHub. Callback: `<BETTER_AUTH_URL>/api/auth/callback/github` |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | OAuth Client de Google (Aplicación web). Redirect URI: `<BETTER_AUTH_URL>/api/auth/callback/google` |
 | `DNS_SERVERS` | Opcional. Si Atlas falla con `querySrv ECONNREFUSED`, usar `8.8.8.8,1.1.1.1` |
 
 Scripts: `dev`, `build`, `start`, `typecheck`, `seed` (`npm run seed -- --reset` recarga los vehículos).
@@ -149,7 +151,7 @@ El frontend llama siempre a `/api` (mismo origen): en local lo resuelve el proxy
 - Build Command: `npm install --include=dev && npm run build`
 - Start Command: `npm start`
 - Health Check Path: `/health`
-- Variables: las del `.env.example` (`BETTER_AUTH_URL` = URL del frontend; OAuth App de GitHub de producción con callback `https://autovault-pv40.onrender.com/api/auth/callback/github`).
+- Variables: las del `.env.example` (`BETTER_AUTH_URL` = URL del frontend; OAuth App de GitHub de producción con callback `https://autovault-pv40.onrender.com/api/auth/callback/github`; OAuth Client de Google con redirect URI `https://autovault-pv40.onrender.com/api/auth/callback/google` y la app **publicada** ("En producción") para que entre cualquier cuenta de Google).
 
 **Frontend → Static Site**
 - Root Directory: `frontend`
