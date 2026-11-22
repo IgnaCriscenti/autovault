@@ -5,9 +5,9 @@ import { Logo } from "@/components/brand/Logo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const PERKS = [
-  { icon: Box, text: "Recorre cada auto en 3D, 360°" },
-  { icon: CarIcon, text: "Publica tu auto y gestionalo desde un solo lugar" },
-  { icon: ShieldCheckIcon, text: "Ingresa con email, Google o GitHub" },
+  { icon: Box, text: "Recorré cada auto en 3D, 360°" },
+  { icon: CarIcon, text: "Publicá tu auto y gestionalo desde un solo lugar" },
+  { icon: ShieldCheckIcon, text: "Ingresá con email, Google o GitHub" },
 ];
 
 interface AuthCardProps {
@@ -27,7 +27,7 @@ export const AuthCard = ({ title, description, children }: AuthCardProps) => (
         <Logo tagline />
       </div>
       <div className="relative flex flex-col gap-4">
-        <p className="font-heading text-3xl leading-tight font-bold">Tu proximo auto, a un clic (y en 3D).</p>
+        <p className="font-heading text-3xl leading-tight font-bold">Tu próximo auto, a un clic (y en 3D).</p>
         <ul className="flex flex-col gap-3 text-white/80">
           {PERKS.map(({ icon: Icon, text }) => (
             <li key={text} className="flex items-center gap-3">
@@ -51,7 +51,7 @@ export const AuthCard = ({ title, description, children }: AuthCardProps) => (
   </section>
 );
 
-export const Divider = ({ label = "o continua con" }: { label?: string }) => (
+export const Divider = ({ label = "o continuá con" }: { label?: string }) => (
   <div className="flex items-center gap-3 text-xs text-muted-foreground">
     <span className="h-px flex-1 bg-border" />
     {label}

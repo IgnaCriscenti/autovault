@@ -12,20 +12,20 @@ export async function requireVehicleOwnerOrAdmin(
     const vehicle = await findVehicleById(req.params.id);
 
     if (!vehicle) {
-      res.status(404).json({ error: { message: "Vehiculo no encontrado" } });
+      res.status(404).json({ error: { message: "Vehículo no encontrado" } });
       return;
     }
 
     const isAdmin = req.user?.role === "admin";
     const isOwner = vehicle.owner === req.user?.id;
     if (!isAdmin && !isOwner) {
-      res.status(403).json({ error: { message: "Solo podes modificar tus propias publicaciones" } });
+      res.status(403).json({ error: { message: "Solo podés modificar tus propias publicaciones" } });
       return;
     }
 
     next();
   } catch (error) {
     console.error("[ownership] error checking vehicle owner:", error);
-    res.status(500).json({ error: { message: "No se pudo verificar el vehiculo" } });
+    res.status(500).json({ error: { message: "No se pudo verificar el vehículo" } });
   }
 }

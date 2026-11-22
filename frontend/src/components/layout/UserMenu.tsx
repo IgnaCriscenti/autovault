@@ -42,7 +42,7 @@ export const UserMenu = ({ user, onLogout }: { user: MenuUser; onLogout: () => v
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-10 gap-2 rounded-full pr-3 pl-1" aria-label="Menu de usuario">
+        <Button variant="ghost" className="h-10 gap-2 rounded-full pr-3 pl-1" aria-label="Menú de usuario">
           <UserAvatar user={user} className="size-8" />
           <span className="hidden max-w-32 truncate text-sm font-medium sm:inline">{user.name}</span>
         </Button>
@@ -71,7 +71,7 @@ export const UserMenu = ({ user, onLogout }: { user: MenuUser; onLogout: () => v
             <>
               <DropdownMenuItem asChild>
                 <Link to="/admin">
-                  <ShieldCheckIcon /> Panel de administracion
+                  <ShieldCheckIcon /> Panel de administración
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -84,7 +84,7 @@ export const UserMenu = ({ user, onLogout }: { user: MenuUser; onLogout: () => v
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={onLogout} className="text-destructive focus:text-destructive">
-          <LogOutIcon /> Cerrar sesion
+          <LogOutIcon /> Cerrar sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import * as vehiclesService from "../services/vehicles.service.js";
 import { CreateVehicleInput, ListVehiclesInput, UpdateVehicleInput } from "../schemas/vehicle.schema.js";
 
-const NOT_FOUND = { error: { message: "Vehiculo no encontrado" } };
+const NOT_FOUND = { error: { message: "Vehículo no encontrado" } };
 
 // Errores de validacion de Mongoose (ej: un enum invalido que se escapo de Zod) -> 400, el resto -> 500.
 function handleError(res: Response, error: unknown, action: string): void {
@@ -13,7 +13,7 @@ function handleError(res: Response, error: unknown, action: string): void {
     return;
   }
   console.error(`[vehicles] error ${action}:`, error);
-  res.status(500).json({ error: { message: `No se pudo ${action} el vehiculo` } });
+  res.status(500).json({ error: { message: `No se pudo ${action} el vehículo` } });
 }
 
 // GET /api/v1/vehicles

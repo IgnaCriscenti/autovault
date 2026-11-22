@@ -5,21 +5,21 @@ export const FUEL_LABELS: Record<FuelType, string> = {
   gasoline: "Nafta",
   diesel: "Diesel",
   cng: "GNC",
-  hybrid: "Hibrido",
-  electric: "Electrico",
+  hybrid: "Híbrido",
+  electric: "Eléctrico",
 };
 
 export const TRANSMISSION_LABELS: Record<Transmission, string> = {
   manual: "Manual",
-  automatic: "Automatica",
+  automatic: "Automática",
 };
 
 export const BODY_LABELS: Record<BodyType, string> = {
-  sedan: "Sedan",
+  sedan: "Sedán",
   hatchback: "Hatchback",
   suv: "SUV",
   pickup: "Pick-up",
-  coupe: "Coupe",
+  coupe: "Coupé",
   van: "Utilitario",
 };
 

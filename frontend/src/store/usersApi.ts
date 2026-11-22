@@ -36,7 +36,7 @@ export interface CreateUserInput {
 type BetterAuthError = { message?: string; status?: number } | null;
 
 const errorMessage = (error: BetterAuthError, fallback: string): string => {
-  if (error?.status === 403) return "No tenes permisos para gestionar usuarios";
+  if (error?.status === 403) return "No tenés permisos para gestionar usuarios";
   return error?.message ?? fallback;
 };
 

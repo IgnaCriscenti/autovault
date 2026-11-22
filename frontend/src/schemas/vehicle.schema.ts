@@ -10,15 +10,15 @@ const MIN_YEAR = 1950;
 const MAX_YEAR = new Date().getFullYear() + 1;
 
 // Los inputs numericos usan valueAsNumber: un campo vacio llega como NaN -> error de tipo.
-const numberField = (label: string) => z.number({ error: `${label} debe ser un numero` });
+const numberField = (label: string) => z.number({ error: `${label} debe ser un número` });
 
 export const vehicleSchema = z.object({
-  brand: z.string().trim().min(1, { error: "La marca es obligatoria" }).max(50, { error: "Maximo 50 caracteres" }),
-  model: z.string().trim().min(1, { error: "El modelo es obligatorio" }).max(80, { error: "Maximo 80 caracteres" }),
+  brand: z.string().trim().min(1, { error: "La marca es obligatoria" }).max(50, { error: "Máximo 50 caracteres" }),
+  model: z.string().trim().min(1, { error: "El modelo es obligatorio" }).max(80, { error: "Máximo 80 caracteres" }),
   year: numberField("El año")
     .int({ error: "El año debe ser entero" })
-    .min(MIN_YEAR, { error: `Minimo ${MIN_YEAR}` })
-    .max(MAX_YEAR, { error: `Maximo ${MAX_YEAR}` }),
+    .min(MIN_YEAR, { error: `Mínimo ${MIN_YEAR}` })
+    .max(MAX_YEAR, { error: `Máximo ${MAX_YEAR}` }),
   price: numberField("El precio")
     .positive({ error: "El precio debe ser mayor a 0" })
     .max(10_000_000, { error: "El precio es demasiado alto" }),
@@ -26,21 +26,21 @@ export const vehicleSchema = z.object({
     .int({ error: "El kilometraje debe ser entero" })
     .min(0, { error: "No puede ser negativo" })
     .max(2_000_000, { error: "El kilometraje es demasiado alto" }),
-  fuelType: z.enum(FUEL_TYPES, { error: "Elegi un combustible" }),
-  transmission: z.enum(TRANSMISSIONS, { error: "Elegi una transmision" }),
-  bodyType: z.enum(BODY_TYPES, { error: "Elegi una carroceria" }),
-  color: z.string().trim().max(30, { error: "Maximo 30 caracteres" }),
-  description: z.string().trim().max(2000, { error: "Maximo 2000 caracteres" }),
-  imageUrl: z.union([z.url({ protocol: /^https?$/, error: "Ingresa una URL valida (https://...)" }), z.literal("")]),
+  fuelType: z.enum(FUEL_TYPES, { error: "Elegí un combustible" }),
+  transmission: z.enum(TRANSMISSIONS, { error: "Elegí una transmisión" }),
+  bodyType: z.enum(BODY_TYPES, { error: "Elegí una carrocería" }),
+  color: z.string().trim().max(30, { error: "Máximo 30 caracteres" }),
+  description: z.string().trim().max(2000, { error: "Máximo 2000 caracteres" }),
+  imageUrl: z.union([z.url({ protocol: /^https?$/, error: "Ingresá una URL válida (https://...)" }), z.literal("")]),
   // URL o id de Sketchfab (el backend lo normaliza al id). Vacio = sin vista 3D.
   sketchfabModelId: z
     .string()
     .trim()
     .refine((value) => value === "" || isSketchfabId(extractSketchfabId(value)), {
-      error: "Pega la URL de un modelo de Sketchfab (o su id de 32 caracteres)",
+      error: "Pegá la URL de un modelo de Sketchfab (o su id de 32 caracteres)",
     }),
   available: z.boolean(),
-  listedAt: z.iso.date({ error: "Ingresa una fecha valida" }),
+  listedAt: z.iso.date({ error: "Ingresá una fecha válida" }),
 });
 
 export type VehicleFormValues = z.infer<typeof vehicleSchema>;

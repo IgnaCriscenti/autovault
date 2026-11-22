@@ -36,7 +36,7 @@ import { AvailabilityBadge, Badge3D } from "../components/vehicles/VehicleCard";
 const BackLink = () => (
   <Button asChild variant="ghost" size="sm" className="w-fit text-muted-foreground">
     <Link to="/">
-      <ArrowLeftIcon /> Volver al catalogo
+      <ArrowLeftIcon /> Volver al catálogo
     </Link>
   </Button>
 );
@@ -72,7 +72,7 @@ export const VehicleDetail = () => {
     return (
       <section className="flex flex-col gap-3">
         <BackLink />
-        <FormError message={`No se pudo cargar el vehiculo: ${getErrorMessage(error)}`} />
+        <FormError message={`No se pudo cargar el vehículo: ${getErrorMessage(error)}`} />
       </section>
     );
   }
@@ -116,8 +116,8 @@ export const VehicleDetail = () => {
             <SpecTile icon={CalendarIcon} label="Año" value={String(vehicle.year)} />
             <SpecTile icon={GaugeIcon} label="Kilometraje" value={formatMileage(vehicle.mileage)} />
             <SpecTile icon={FuelIcon} label="Combustible" value={FUEL_LABELS[vehicle.fuelType]} />
-            <SpecTile icon={CogIcon} label="Transmision" value={TRANSMISSION_LABELS[vehicle.transmission]} />
-            <SpecTile icon={CarFrontIcon} label="Carroceria" value={BODY_LABELS[vehicle.bodyType]} />
+            <SpecTile icon={CogIcon} label="Transmisión" value={TRANSMISSION_LABELS[vehicle.transmission]} />
+            <SpecTile icon={CarFrontIcon} label="Carrocería" value={BODY_LABELS[vehicle.bodyType]} />
             <SpecTile icon={PaletteIcon} label="Color" value={vehicle.color || "—"} />
           </CardContent>
 
@@ -138,7 +138,7 @@ export const VehicleDetail = () => {
             {editPath && (
               <Button asChild size="lg" className="flex-1">
                 <Link to={editPath}>
-                  <PencilIcon /> {isOwner ? "Editar mi publicacion" : "Editar (admin)"}
+                  <PencilIcon /> {isOwner ? "Editar mi publicación" : "Editar (admin)"}
                 </Link>
               </Button>
             )}

@@ -10,7 +10,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
 
     if (!session) {
-      res.status(401).json({ error: { message: "Tenes que iniciar sesion" } });
+      res.status(401).json({ error: { message: "Tenés que iniciar sesión" } });
       return;
     }
 
@@ -18,7 +18,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     next();
   } catch (error) {
     console.error("[auth] error reading session:", error);
-    res.status(500).json({ error: { message: "No se pudo verificar la sesion" } });
+    res.status(500).json({ error: { message: "No se pudo verificar la sesión" } });
   }
 }
 
@@ -26,12 +26,12 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
 export function requireRole(...allowedRoles: UserRole[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      res.status(401).json({ error: { message: "Tenes que iniciar sesion" } });
+      res.status(401).json({ error: { message: "Tenés que iniciar sesión" } });
       return;
     }
 
     if (!allowedRoles.includes(req.user.role as UserRole)) {
-      res.status(403).json({ error: { message: "No tenes permisos para realizar esta accion" } });
+      res.status(403).json({ error: { message: "No tenés permisos para realizar esta acción" } });
       return;
     }
 

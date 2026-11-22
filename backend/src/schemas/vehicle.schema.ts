@@ -16,7 +16,7 @@ export const ALLOWED_SORT_FIELDS = ["listedAt", "price", "year", "mileage", "bra
 
 // Los query params siempre llegan como string: z.coerce los convierte a numero.
 const optionalNumber = (label: string) =>
-  z.coerce.number({ error: `${label} debe ser un numero` }).min(0, `${label} no puede ser negativo`).optional();
+  z.coerce.number({ error: `${label} debe ser un número` }).min(0, `${label} no puede ser negativo`).optional();
 
 // "true"/"false" -> boolean. (z.coerce.boolean() convertiria "false" en true.)
 const optionalBoolean = z
@@ -37,19 +37,19 @@ export const listVehiclesSchema = z
     fuelType: z.enum(FUEL_TYPES).optional(),
     transmission: z.enum(TRANSMISSIONS).optional(),
     bodyType: z.enum(BODY_TYPES).optional(),
-    minPrice: optionalNumber("El precio minimo"),
-    maxPrice: optionalNumber("El precio maximo"),
-    minYear: optionalNumber("El año minimo"),
-    maxYear: optionalNumber("El año maximo"),
+    minPrice: optionalNumber("El precio mínimo"),
+    maxPrice: optionalNumber("El precio máximo"),
+    minYear: optionalNumber("El año mínimo"),
+    maxYear: optionalNumber("El año máximo"),
     available: optionalBoolean,
     has3d: optionalBoolean, // true = solo los que tienen modelo 3D de Sketchfab
   })
   .refine((q) => q.minPrice === undefined || q.maxPrice === undefined || q.minPrice <= q.maxPrice, {
-    message: "El precio minimo no puede ser mayor al maximo",
+    message: "El precio mínimo no puede ser mayor al máximo",
     path: ["minPrice"],
   })
   .refine((q) => q.minYear === undefined || q.maxYear === undefined || q.minYear <= q.maxYear, {
-    message: "El año minimo no puede ser mayor al maximo",
+    message: "El año mínimo no puede ser mayor al máximo",
     path: ["minYear"],
   });
 
@@ -70,32 +70,32 @@ export const createVehicleSchema = z.object({
     .int("El kilometraje debe ser un número entero")
     .min(0, "El kilometraje no puede ser negativo")
     .max(2_000_000, "El kilometraje es demasiado alto"),
-  fuelType: z.enum(FUEL_TYPES, { error: `Combustible invalido. Opciones: ${FUEL_TYPES.join(", ")}` }),
-  transmission: z.enum(TRANSMISSIONS, { error: `Transmision invalida. Opciones: ${TRANSMISSIONS.join(", ")}` }),
-  bodyType: z.enum(BODY_TYPES, { error: `Carroceria invalida. Opciones: ${BODY_TYPES.join(", ")}` }),
+  fuelType: z.enum(FUEL_TYPES, { error: `Combustible inválido. Opciones: ${FUEL_TYPES.join(", ")}` }),
+  transmission: z.enum(TRANSMISSIONS, { error: `Transmisión inválida. Opciones: ${TRANSMISSIONS.join(", ")}` }),
+  bodyType: z.enum(BODY_TYPES, { error: `Carrocería inválida. Opciones: ${BODY_TYPES.join(", ")}` }),
   color: z.string().trim().max(30, "El color no puede superar 30 caracteres").optional(),
-  description: z.string().trim().max(2000, "La descripcion no puede superar 2000 caracteres").optional(),
+  description: z.string().trim().max(2000, "La descripción no puede superar 2000 caracteres").optional(),
   // "" permite borrar la imagen al editar.
   imageUrl: z
-    .union([z.url({ protocol: /^https?$/, error: "La URL de la imagen no es valida" }), z.literal("")])
+    .union([z.url({ protocol: /^https?$/, error: "La URL de la imagen no es válida" }), z.literal("")])
     .optional(),
   // Modelo 3D: acepta el id o la URL de Sketchfab (se normaliza al id). "" lo borra al editar.
   sketchfabModelId: z
     .string()
     .transform(extractSketchfabId)
     .refine((id) => id === "" || SKETCHFAB_UID_REGEX.test(id), {
-      message: "Pega la URL de un modelo de Sketchfab o su id (32 caracteres)",
+      message: "Pegá la URL de un modelo de Sketchfab o su id (32 caracteres)",
     })
     .optional(),
   available: z.boolean({ error: "Disponible debe ser true o false" }).optional(),
   // Acepta "2026-11-21" o un ISO completo.
-  listedAt: z.coerce.date({ error: "La fecha de publicacion no es valida" }).optional(),
+  listedAt: z.coerce.date({ error: "La fecha de publicación no es válida" }).optional(),
 });
 
 // PATCH/PUT: todos los campos opcionales, pero al menos uno.
 export const updateVehicleSchema = createVehicleSchema
   .partial()
-  .refine((data) => Object.keys(data).length > 0, { message: "No se envio ningun campo para actualizar" });
+  .refine((data) => Object.keys(data).length > 0, { message: "No se envió ningún campo para actualizar" });
 
 export type ListVehiclesInput = z.infer<typeof listVehiclesSchema>;
 export type CreateVehicleInput = z.infer<typeof createVehicleSchema>;

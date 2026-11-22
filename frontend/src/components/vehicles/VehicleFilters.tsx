@@ -101,7 +101,7 @@ export const VehicleFilters = ({ value, onChange }: VehicleFiltersProps) => {
             ))}
           </NativeSelect>
         </FilterField>
-        <FilterField label="Carroceria">
+        <FilterField label="Carrocería">
           <NativeSelect
             value={draft.bodyType}
             onChange={(e) => set("bodyType", e.target.value as Filters["bodyType"])}
@@ -129,7 +129,7 @@ export const VehicleFilters = ({ value, onChange }: VehicleFiltersProps) => {
             ))}
           </NativeSelect>
         </FilterField>
-        <FilterField label="Transmision">
+        <FilterField label="Transmisión">
           <NativeSelect
             value={draft.transmission}
             onChange={(e) => set("transmission", e.target.value as Filters["transmission"])}
@@ -143,7 +143,7 @@ export const VehicleFilters = ({ value, onChange }: VehicleFiltersProps) => {
             ))}
           </NativeSelect>
         </FilterField>
-        <FilterField label="Precio min. (USD)">
+        <FilterField label="Precio mín. (USD)">
           <Input
             type="number"
             min={0}
@@ -154,12 +154,12 @@ export const VehicleFilters = ({ value, onChange }: VehicleFiltersProps) => {
             className="h-9 bg-background"
           />
         </FilterField>
-        <FilterField label="Precio max. (USD)">
+        <FilterField label="Precio máx. (USD)">
           <Input
             type="number"
             min={0}
             step={1000}
-            placeholder="Sin limite"
+            placeholder="Sin límite"
             value={draft.maxPrice}
             onChange={(e) => set("maxPrice", e.target.value)}
             className="h-9 bg-background"

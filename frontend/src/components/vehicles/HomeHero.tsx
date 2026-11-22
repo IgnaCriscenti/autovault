@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const HIGHLIGHTS = [
   { icon: Box, text: "Vista 3D 360°" },
-  { icon: CarIcon, text: "Publica tu auto gratis" },
+  { icon: CarIcon, text: "Publicá tu auto gratis" },
   { icon: ShieldCheckIcon, text: "Concesionaria y particulares" },
 ];
 
@@ -33,18 +33,18 @@ export const HomeHero = ({ onBrowse }: { onBrowse: () => void }) => {
       <div className="relative grid items-center gap-10 md:grid-cols-[1.15fr_1fr]">
         <div className="flex flex-col gap-5">
           <Badge className="bg-white/15 text-white backdrop-blur">
-            <SparklesIcon /> Nuevo: recorre los autos en 3D
+            <SparklesIcon /> Nuevo: recorré los autos en 3D
           </Badge>
           <h1 className="text-4xl leading-[1.1] font-bold sm:text-5xl">
-            Encontra tu proximo auto. <span className="text-brand-200">Miralo en 3D</span> antes de visitarlo.
+            Encontrá tu próximo auto. <span className="text-brand-200">Miralo en 3D</span> antes de visitarlo.
           </h1>
           <p className="max-w-lg text-base text-white/75">
-            0 km y usados seleccionados por la concesionaria y por particulares. Filtra, compara y gira cada modelo
+            0 km y usados seleccionados por la concesionaria y por particulares. Filtrá, compará y girá cada modelo
             360° desde tu casa.
           </p>
           <div className="flex flex-wrap gap-3">
             <Button size="lg" onClick={onBrowse} className="h-11 bg-white px-5 text-brand-900 hover:bg-white/90">
-              Ver catalogo <ArrowRightIcon />
+              Ver catálogo <ArrowRightIcon />
             </Button>
             <Button
               asChild
@@ -52,7 +52,7 @@ export const HomeHero = ({ onBrowse }: { onBrowse: () => void }) => {
               variant="outline"
               className="h-11 border-white/30 bg-white/5 px-5 text-white hover:bg-white/15 hover:text-white"
             >
-              <Link to="/mis-publicaciones">Publica tu auto</Link>
+              <Link to="/mis-publicaciones">Publicá tu auto</Link>
             </Button>
           </div>
           <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/80">

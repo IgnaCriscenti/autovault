@@ -53,23 +53,23 @@ export const Home = () => {
       <section ref={catalogRef} className="flex scroll-mt-24 flex-col gap-6">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
-            <h2 className="text-3xl font-bold">Catalogo</h2>
+            <h2 className="text-3xl font-bold">Catálogo</h2>
             <p className="text-muted-foreground" aria-live="polite">
-              {isLoading ? "Cargando vehiculos..." : `${total} ${total === 1 ? "vehiculo encontrado" : "vehiculos encontrados"}`}
+              {isLoading ? "Cargando vehículos..." : `${total} ${total === 1 ? "vehículo encontrado" : "vehículos encontrados"}`}
             </p>
           </div>
         </div>
 
         <VehicleFilters value={filters} onChange={handleFiltersChange} />
 
-        {error && <FormError message={`No se pudo cargar el catalogo: ${getErrorMessage(error)}`} />}
+        {error && <FormError message={`No se pudo cargar el catálogo: ${getErrorMessage(error)}`} />}
 
         {!isLoading && !error && vehicles.length === 0 && (
           <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed p-12 text-center">
             <SearchXIcon className="size-10 text-muted-foreground" />
-            <p className="font-medium">No hay vehiculos que coincidan con la busqueda.</p>
+            <p className="font-medium">No hay vehículos que coincidan con la búsqueda.</p>
             <Button variant="outline" onClick={() => handleFiltersChange(EMPTY_FILTERS)}>
-              Ver todo el catalogo
+              Ver todo el catálogo
             </Button>
           </div>
         )}

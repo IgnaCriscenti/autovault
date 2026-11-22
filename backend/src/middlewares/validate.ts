@@ -7,7 +7,7 @@ function sendValidationError(res: Response, error: z.ZodError): void {
   const { formErrors, fieldErrors } = z.flattenError(error);
   res.status(400).json({
     error: {
-      message: formErrors[0] ?? "Los datos enviados no son validos",
+      message: formErrors[0] ?? "Los datos enviados no son válidos",
       details: fieldErrors, // ej: { price: ["El precio debe ser mayor a 0"] }
     },
   });
@@ -36,7 +36,7 @@ export function validateQuery(schema: ZodType) {
 // 400 si el :id de la URL no es un ObjectId de Mongo (evita un CastError -> 500).
 export function validateObjectId(req: Request<{ id: string }>, res: Response, next: NextFunction): void {
   if (!isValidObjectId(req.params.id)) {
-    res.status(400).json({ error: { message: "El id enviado no es valido" } });
+    res.status(400).json({ error: { message: "El id enviado no es válido" } });
     return;
   }
   next();

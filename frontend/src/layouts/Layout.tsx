@@ -26,7 +26,7 @@ export const Layout = () => {
   const isAdmin = user?.role === "admin";
 
   const links = [
-    { to: "/", label: "Catalogo", end: true, show: true },
+    { to: "/", label: "Catálogo", end: true, show: true },
     { to: "/mis-publicaciones", label: "Mis publicaciones", end: false, show: !!user },
     { to: "/admin", label: "Admin", end: false, show: isAdmin },
   ].filter((link) => link.show);
@@ -35,7 +35,7 @@ export const Layout = () => {
   const handleLogout = async () => {
     const { error } = await signOut();
     if (error) {
-      toast.error(error.message ?? "No se pudo cerrar sesion");
+      toast.error(error.message ?? "No se pudo cerrar sesión");
       return;
     }
     window.location.replace("/");
@@ -75,7 +75,7 @@ export const Layout = () => {
             {/* Menu movil */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon-lg" className="md:hidden" aria-label="Abrir menu">
+                <Button variant="ghost" size="icon-lg" className="md:hidden" aria-label="Abrir menú">
                   <MenuIcon />
                 </Button>
               </SheetTrigger>
@@ -115,7 +115,7 @@ export const Layout = () => {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:px-6">
           <div className="flex items-center gap-2">
             <LogoMark className="size-6" />
-            <span>AutoVault · TP2 Metodologias y Desarrollos Web (UAI)</span>
+            <span>AutoVault · TP2 Metodologías y Desarrollos Web (UAI)</span>
           </div>
           <div className="flex items-center gap-4">
             <Link to="/privacidad" className="hover:text-foreground">
@@ -123,7 +123,7 @@ export const Layout = () => {
             </Link>
             <Separator orientation="vertical" className="h-4" />
             <a href={REPO_URL} target="_blank" rel="noreferrer" className="hover:text-foreground">
-              Codigo en GitHub
+              Código en GitHub
             </a>
           </div>
         </div>

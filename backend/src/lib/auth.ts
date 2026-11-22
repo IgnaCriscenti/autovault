@@ -21,13 +21,13 @@ const roleRulesMiddleware = createAuthMiddleware(async (ctx) => {
 
   const role: unknown = ctx.body?.role;
   if (role !== undefined && (typeof role !== "string" || !VALID_ROLES.includes(role))) {
-    throw new APIError("BAD_REQUEST", { message: `Rol invalido. Opciones: ${VALID_ROLES.join(", ")}` });
+    throw new APIError("BAD_REQUEST", { message: `Rol inválido. Opciones: ${VALID_ROLES.join(", ")}` });
   }
 
   if (ctx.path === "/admin/set-role") {
     const session = await getSessionFromCtx(ctx);
     if (session && session.user.id === ctx.body?.userId) {
-      throw new APIError("BAD_REQUEST", { message: "No podes cambiar tu propio rol" });
+      throw new APIError("BAD_REQUEST", { message: "No podés cambiar tu propio rol" });
     }
   }
 });

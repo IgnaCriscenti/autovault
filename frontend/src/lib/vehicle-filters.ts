@@ -4,10 +4,10 @@ import type { VehiclesQuery } from "../store/api";
 import type { BodyType, FuelType, Transmission } from "../types/vehicle";
 
 export const SORT_OPTIONS = {
-  recent: { label: "Mas recientes", sortBy: "listedAt", sortOrder: "desc" },
+  recent: { label: "Más recientes", sortBy: "listedAt", sortOrder: "desc" },
   price_asc: { label: "Menor precio", sortBy: "price", sortOrder: "asc" },
   price_desc: { label: "Mayor precio", sortBy: "price", sortOrder: "desc" },
-  year_desc: { label: "Mas nuevos", sortBy: "year", sortOrder: "desc" },
+  year_desc: { label: "Más nuevos", sortBy: "year", sortOrder: "desc" },
   km_asc: { label: "Menor kilometraje", sortBy: "mileage", sortOrder: "asc" },
 } as const;
 
