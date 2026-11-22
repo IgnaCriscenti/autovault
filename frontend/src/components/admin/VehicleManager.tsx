@@ -121,6 +121,7 @@ export const VehicleManager = ({ scope, emptyMessage }: VehicleManagerProps) => 
           <thead className="bg-slate-50 text-xs uppercase text-slate-500">
             <tr>
               <th className="px-4 py-3">Vehiculo</th>
+              {scope === "all" && <th className="px-4 py-3">Publicado por</th>}
               <th className="px-4 py-3">Año</th>
               <th className="px-4 py-3">Km</th>
               <th className="px-4 py-3">Precio</th>
@@ -135,12 +136,15 @@ export const VehicleManager = ({ scope, emptyMessage }: VehicleManagerProps) => 
                   <Link to={`/vehicles/${vehicle._id}`} className="hover:underline">
                     {vehicle.brand} {vehicle.model}
                   </Link>
-                  {scope === "all" && vehicle.owner === myId && (
-                    <span className="ml-2 rounded bg-slate-200 px-1.5 py-0.5 text-xs font-normal text-slate-700">
-                      Tuyo
-                    </span>
-                  )}
                 </td>
+                {scope === "all" && (
+                  <td className="px-4 py-3 text-slate-600">
+                    {vehicle.ownerName}
+                    {vehicle.owner === myId && (
+                      <span className="ml-2 rounded bg-slate-200 px-1.5 py-0.5 text-xs text-slate-700">Vos</span>
+                    )}
+                  </td>
+                )}
                 <td className="px-4 py-3">{vehicle.year}</td>
                 <td className="px-4 py-3">{formatMileage(vehicle.mileage)}</td>
                 <td className="px-4 py-3">{formatPrice(vehicle.price)}</td>
@@ -169,7 +173,7 @@ export const VehicleManager = ({ scope, emptyMessage }: VehicleManagerProps) => 
             ))}
             {!isLoading && vehicles.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-slate-500">
+                <td colSpan={scope === "all" ? 7 : 6} className="px-4 py-6 text-center text-slate-500">
                   {debouncedSearch ? "No hay vehiculos que coincidan con la busqueda." : emptyMessage}
                 </td>
               </tr>

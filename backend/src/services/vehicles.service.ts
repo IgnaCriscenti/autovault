@@ -1,12 +1,26 @@
 // Capa de servicio: logica de negocio y acceso a datos de vehiculos, en UN solo lugar.
 // No sabe nada de HTTP (req/res). La usan los controllers (y mas adelante el agente).
-import { QueryFilter } from "mongoose";
+import mongoose, { QueryFilter, Types, isValidObjectId } from "mongoose";
 import Vehicle, { IVehicle, IVehicleDocument } from "../models/Vehicle.js";
 import { escapeRegex } from "../lib/escape-regex.js";
 import { CreateVehicleInput, ListVehiclesInput, UpdateVehicleInput } from "../schemas/vehicle.schema.js";
 import { Paginated } from "../types/pagination.types.js";
 
 const SEARCH_FIELDS = ["brand", "model", "color", "description"] as const;
+
+// Vehiculo como lo devuelve la API de lectura: con el NOMBRE de quien lo publico (no el email: es publico).
+export type VehicleWithOwner = IVehicle & { _id: Types.ObjectId; ownerName: string };
+
+// Agrega ownerName buscando los dueños en la coleccion "user" de Better Auth, en UNA sola consulta.
+async function withOwnerNames(vehicles: (IVehicle & { _id: Types.ObjectId })[]): Promise<VehicleWithOwner[]> {
+  const ids = [...new Set(vehicles.map((v) => v.owner))].filter(isValidObjectId).map((id) => new Types.ObjectId(id));
+  const users = await mongoose.connection
+    .collection("user")
+    .find({ _id: { $in: ids } }, { projection: { name: 1 } })
+    .toArray();
+  const names = new Map(users.map((u) => [u._id.toString(), String(u.name)]));
+  return vehicles.map((v) => ({ ...v, ownerName: names.get(v.owner) ?? "Usuario eliminado" }));
+}
 
 // El filtro se arma campo por campo desde input YA validado por Zod: nunca se pasa el input crudo
 // a Mongo (eso permitiria inyectar operadores como { "$gt": "" }).
@@ -37,21 +51,31 @@ function buildFilter(input: ListVehiclesInput): QueryFilter<IVehicle> {
 }
 
 // ownerId: si viene, lista solo las publicaciones de ese usuario ("mis publicaciones").
-export async function listVehicles(input: ListVehiclesInput, ownerId?: string): Promise<Paginated<IVehicleDocument>> {
+export async function listVehicles(input: ListVehiclesInput, ownerId?: string): Promise<Paginated<VehicleWithOwner>> {
   const { page, limit, sortBy, sortOrder } = input;
   const filter = buildFilter(input);
   if (ownerId) filter.owner = ownerId;
 
-  const [data, total] = await Promise.all([
+  const [vehicles, total] = await Promise.all([
     Vehicle.find(filter)
       // _id como desempate: sin el, la paginacion puede repetir/saltear items con valores iguales.
       .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1, _id: 1 })
       .skip((page - 1) * limit)
-      .limit(limit),
+      .limit(limit)
+      .lean(), // objetos planos (mas livianos): solo se leen y se serializan
     Vehicle.countDocuments(filter),
   ]);
 
+  const data = await withOwnerNames(vehicles);
   return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+}
+
+// Detalle para la API (GET /:id), con el nombre de quien lo publico.
+export async function getVehicleDetail(id: string): Promise<VehicleWithOwner | null> {
+  const vehicle = await Vehicle.findById(id).lean();
+  if (!vehicle) return null;
+  const [withOwner] = await withOwnerNames([vehicle]);
+  return withOwner;
 }
 
 // Marcas distintas del catalogo, ordenadas (para el filtro del front).

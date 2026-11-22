@@ -22,6 +22,7 @@ export interface Vehicle {
   available: boolean;
   listedAt: string;
   owner: string; // id del usuario que lo publico
+  ownerName: string; // nombre de quien lo publico (lo agrega la API)
   createdAt: string;
   updatedAt: string;
 }

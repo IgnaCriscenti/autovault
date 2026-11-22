@@ -49,7 +49,7 @@ export async function listBrands(_req: Request, res: Response): Promise<void> {
 // GET /api/v1/vehicles/:id
 export async function getVehicleById(req: Request<{ id: string }>, res: Response): Promise<void> {
   try {
-    const vehicle = await vehiclesService.findVehicleById(req.params.id);
+    const vehicle = await vehiclesService.getVehicleDetail(req.params.id);
     if (!vehicle) {
       res.status(404).json(NOT_FOUND);
       return;

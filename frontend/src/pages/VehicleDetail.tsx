@@ -47,6 +47,7 @@ export const VehicleDetail = () => {
     ["Carroceria", BODY_LABELS[vehicle.bodyType]],
     ["Color", vehicle.color || "—"],
     ["Publicado", formatDate(vehicle.listedAt)],
+    ["Publicado por", vehicle.ownerName],
   ];
 
   // El dueño edita desde "Mis publicaciones"; un admin (si no es suyo) desde el panel.

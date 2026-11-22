@@ -59,6 +59,8 @@ Recurso REST: `/api/v1/vehicles`
 | `listedAt` | fecha | Fecha de publicación |
 | `owner` | texto | Id del usuario que lo publicó (lo asigna el backend) |
 
+En las respuestas de lectura (`GET`), cada vehículo incluye además `ownerName`: el nombre de quien lo publicó (no el email, porque el listado es público).
+
 ## Stack
 
 - **Backend** (`backend/`): Node.js, Express 5, TypeScript, MongoDB (Mongoose), Zod, Better Auth (plugin `admin` para roles).
