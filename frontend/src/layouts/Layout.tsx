@@ -4,6 +4,7 @@ import { Link, NavLink, Outlet } from "react-router";
 import { MenuIcon } from "lucide-react";
 import { toast } from "sonner";
 import { signOut, useSession } from "../lib/auth-client";
+import { clearChats } from "../lib/chat-storage";
 import { cn } from "@/lib/utils";
 import { Logo, LogoMark } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,8 @@ export const Layout = () => {
 
   const links = [
     { to: "/", label: "Catálogo", end: true, show: true },
+    // Visible para todos: sin sesion, ProtectedRoute manda a /login y vuelve al asesor despues.
+    { to: "/asesor", label: "Asesor virtual", end: false, show: true },
     { to: "/mis-publicaciones", label: "Mis publicaciones", end: false, show: !!user },
     { to: "/admin", label: "Admin", end: false, show: isAdmin },
   ].filter((link) => link.show);
@@ -38,6 +41,7 @@ export const Layout = () => {
       toast.error(error.message ?? "No se pudo cerrar sesión");
       return;
     }
+    clearChats();
     window.location.replace("/");
   };
 

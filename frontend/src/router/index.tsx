@@ -27,7 +27,11 @@ export const router = createBrowserRouter([
       // Cualquier usuario logueado: sin sesion -> /login (y vuelve aca despues de ingresar)
       {
         element: <ProtectedRoute />,
-        children: [{ path: "mis-publicaciones", element: <MyVehicles /> }],
+        children: [
+          { path: "mis-publicaciones", element: <MyVehicles /> },
+          // lazy: el chat (y react-markdown) se descargan recien al entrar, no pesan en el catalogo.
+          { path: "asesor", lazy: () => import("../pages/Advisor").then((m) => ({ Component: m.Advisor })) },
+        ],
       },
 
       // Solo admin: sin sesion -> /login, usuario comun -> "Sin permisos"

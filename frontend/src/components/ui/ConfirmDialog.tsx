@@ -18,6 +18,7 @@ interface ConfirmDialogProps {
   title: string;
   description: ReactNode;
   confirmLabel: string;
+  cancelLabel?: string;
   icon?: ReactNode;
   destructive?: boolean;
   onConfirm: () => void;
@@ -29,6 +30,7 @@ export const ConfirmDialog = ({
   title,
   description,
   confirmLabel,
+  cancelLabel = "Cancelar",
   icon,
   destructive = false,
   onConfirm,
@@ -45,7 +47,7 @@ export const ConfirmDialog = ({
         <AlertDialogDescription>{description}</AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+        <AlertDialogCancel>{cancelLabel}</AlertDialogCancel>
         <AlertDialogAction
           variant={destructive ? "destructive" : "default"}
           className={destructive ? "bg-destructive text-white hover:bg-destructive/90" : undefined}
