@@ -159,15 +159,26 @@ export const VehicleFilters = ({ value, onChange }: VehicleFiltersProps) => {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <label className="flex items-center gap-2 text-sm text-slate-700">
-          <input
-            type="checkbox"
-            className="h-4 w-4"
-            checked={draft.onlyAvailable}
-            onChange={(e) => set("onlyAvailable", e.target.checked)}
-          />
-          Solo disponibles
-        </label>
+        <div className="flex flex-wrap items-center gap-4">
+          <label className="flex items-center gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
+              className="h-4 w-4"
+              checked={draft.onlyAvailable}
+              onChange={(e) => set("onlyAvailable", e.target.checked)}
+            />
+            Solo disponibles
+          </label>
+          <label className="flex items-center gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
+              className="h-4 w-4"
+              checked={draft.only3d}
+              onChange={(e) => set("only3d", e.target.checked)}
+            />
+            Con vista 3D
+          </label>
+        </div>
         {hasActiveFilters(draft) && (
           <button type="button" onClick={clear} className="text-sm font-medium text-brand-700 underline">
             Limpiar filtros

@@ -19,6 +19,7 @@ export interface Vehicle {
   color?: string;
   description?: string;
   imageUrl?: string;
+  sketchfabModelId?: string; // modelo 3D (Sketchfab); "" o ausente = sin vista 3D
   available: boolean;
   listedAt: string;
   owner: string; // id del usuario que lo publico

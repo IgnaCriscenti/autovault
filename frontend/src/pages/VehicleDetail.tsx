@@ -12,7 +12,7 @@ import {
   formatMileage,
   formatPrice,
 } from "../lib/vehicle-format";
-import { VehicleImage } from "../components/vehicles/VehicleImage";
+import { VehicleMedia } from "../components/vehicles/VehicleMedia";
 import { AvailabilityBadge } from "../components/vehicles/VehicleCard";
 
 const BackLink = () => (
@@ -61,8 +61,9 @@ export const VehicleDetail = () => {
   return (
     <section className="flex flex-col gap-4">
       <BackLink />
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
-        <VehicleImage src={vehicle.imageUrl} alt={title} className="aspect-video w-full rounded-2xl" />
+      <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
+        {/* key: si se navega a otro vehiculo, la vista vuelve a "Foto" */}
+        <VehicleMedia key={vehicle._id} vehicle={vehicle} />
 
         <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-start justify-between gap-2">

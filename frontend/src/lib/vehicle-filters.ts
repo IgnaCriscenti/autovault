@@ -24,6 +24,7 @@ export interface VehicleFilters {
   maxPrice: string;
   minYear: string;
   onlyAvailable: boolean;
+  only3d: boolean;
   sort: SortKey;
 }
 
@@ -37,6 +38,7 @@ export const EMPTY_FILTERS: VehicleFilters = {
   maxPrice: "",
   minYear: "",
   onlyAvailable: false,
+  only3d: false,
   sort: "recent",
 };
 
@@ -49,6 +51,7 @@ export function parseFilters(params: URLSearchParams): VehicleFilters {
     (filters as unknown as Record<string, string>)[key] = params.get(key) ?? "";
   }
   filters.onlyAvailable = params.get("available") === "true";
+  filters.only3d = params.get("has3d") === "true";
   const sort = params.get("sort");
   if (sort && sort in SORT_OPTIONS) filters.sort = sort as SortKey;
   return filters;
@@ -67,6 +70,7 @@ export function toSearchParams(filters: VehicleFilters, page = 1): URLSearchPara
     if (value) params.set(key, value);
   }
   if (filters.onlyAvailable) params.set("available", "true");
+  if (filters.only3d) params.set("has3d", "true");
   if (filters.sort !== "recent") params.set("sort", filters.sort);
   if (page > 1) params.set("page", String(page));
   return params;
@@ -94,6 +98,7 @@ export function toApiQuery(filters: VehicleFilters, page: number, limit: number)
     maxPrice: toNumber(filters.maxPrice),
     minYear: toNumber(filters.minYear),
     available: filters.onlyAvailable ? true : undefined,
+    has3d: filters.only3d ? true : undefined,
   };
 }
 

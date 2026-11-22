@@ -6,6 +6,8 @@ import { emptyVehicle, toVehicleFormValues, vehicleSchema, type VehicleFormValue
 import { BODY_TYPES, FUEL_TYPES, TRANSMISSIONS, type Vehicle } from "../../types/vehicle";
 import { BODY_LABELS, FUEL_LABELS, TRANSMISSION_LABELS } from "../../lib/vehicle-format";
 import { Field, FieldWrapper, FormError, inputClass } from "../ui/Field";
+import { sketchfabSearchUrl } from "../../lib/sketchfab";
+import { SketchfabPreview } from "./SketchfabPreview";
 
 interface VehicleFormProps {
   vehicle: Vehicle | null; // null = alta
@@ -19,12 +21,16 @@ export const VehicleForm = ({ vehicle, onSave, onCancel }: VehicleFormProps) => 
     handleSubmit,
     reset,
     setError,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<VehicleFormValues>({
     resolver: zodResolver(vehicleSchema),
     // `values` reinicia el form cada vez que cambia el vehiculo que se edita.
     values: vehicle ? toVehicleFormValues(vehicle) : emptyVehicle(),
   });
+  // watch: valores en vivo para el bloque de Sketchfab (busqueda y vista previa).
+  const [brand, model, sketchfabValue, imageUrl] = watch(["brand", "model", "sketchfabModelId", "imageUrl"]);
 
   const onSubmit = async (values: VehicleFormValues) => {
     try {
@@ -108,6 +114,33 @@ export const VehicleForm = ({ vehicle, onSave, onCancel }: VehicleFormProps) => 
       <FieldWrapper label="Descripcion" error={errors.description?.message}>
         <textarea rows={3} className={inputClass} {...register("description")} />
       </FieldWrapper>
+
+      <fieldset className="flex flex-col gap-2 rounded-xl border border-dashed border-slate-300 p-4">
+        <legend className="px-1 text-sm font-semibold text-slate-700">Vista 3D (opcional)</legend>
+        <p className="text-xs text-slate-500">
+          Busca el modelo en{" "}
+          <a
+            href={sketchfabSearchUrl(`${brand} ${model}`.trim() || "car")}
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium text-brand-700 underline"
+          >
+            Sketchfab{brand ? ` ("${`${brand} ${model}`.trim()}")` : ""} ↗
+          </a>{" "}
+          y pega aca la URL de la pagina del modelo.
+        </p>
+        <Field
+          label="URL o id del modelo de Sketchfab"
+          placeholder="https://sketchfab.com/3d-models/..."
+          error={errors.sketchfabModelId?.message}
+          {...register("sketchfabModelId")}
+        />
+        <SketchfabPreview
+          value={sketchfabValue}
+          currentImageUrl={imageUrl}
+          onUseThumbnail={(url) => setValue("imageUrl", url, { shouldDirty: true, shouldValidate: true })}
+        />
+      </fieldset>
 
       <label className="flex items-center gap-2 text-sm text-slate-700">
         <input type="checkbox" className="h-4 w-4" {...register("available")} />

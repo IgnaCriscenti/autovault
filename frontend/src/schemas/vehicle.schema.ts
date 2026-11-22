@@ -1,6 +1,7 @@
 // Validacion del formulario de vehiculo (misma regla que el backend, mensajes en español).
 import { z } from "zod";
 import { BODY_TYPES, FUEL_TYPES, TRANSMISSIONS, type Vehicle } from "../types/vehicle";
+import { extractSketchfabId, isSketchfabId } from "../lib/sketchfab";
 
 // Mensajes por defecto de Zod en español (los campos con mensaje propio lo mantienen).
 z.config(z.locales.es());
@@ -31,6 +32,13 @@ export const vehicleSchema = z.object({
   color: z.string().trim().max(30, { error: "Maximo 30 caracteres" }),
   description: z.string().trim().max(2000, { error: "Maximo 2000 caracteres" }),
   imageUrl: z.union([z.url({ protocol: /^https?$/, error: "Ingresa una URL valida (https://...)" }), z.literal("")]),
+  // URL o id de Sketchfab (el backend lo normaliza al id). Vacio = sin vista 3D.
+  sketchfabModelId: z
+    .string()
+    .trim()
+    .refine((value) => value === "" || isSketchfabId(extractSketchfabId(value)), {
+      error: "Pega la URL de un modelo de Sketchfab (o su id de 32 caracteres)",
+    }),
   available: z.boolean(),
   listedAt: z.iso.date({ error: "Ingresa una fecha valida" }),
 });
@@ -51,6 +59,7 @@ export const emptyVehicle = (): VehicleFormValues => ({
   color: "",
   description: "",
   imageUrl: "",
+  sketchfabModelId: "",
   available: true,
   listedAt: today(),
 });
@@ -67,6 +76,7 @@ export const toVehicleFormValues = (v: Vehicle): VehicleFormValues => ({
   color: v.color ?? "",
   description: v.description ?? "",
   imageUrl: v.imageUrl ?? "",
+  sketchfabModelId: v.sketchfabModelId ?? "",
   available: v.available,
   listedAt: v.listedAt.slice(0, 10),
 });

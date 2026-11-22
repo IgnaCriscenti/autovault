@@ -21,6 +21,7 @@ export interface VehiclesQuery {
   minYear?: number;
   maxYear?: number;
   available?: boolean;
+  has3d?: boolean;
 }
 
 // Usa la instancia de axios compartida. El error se guarda ya como string, listo para mostrar.
