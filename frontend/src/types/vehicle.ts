@@ -21,6 +21,7 @@ export interface Vehicle {
   imageUrl?: string;
   available: boolean;
   listedAt: string;
+  owner: string; // id del usuario que lo publico
   createdAt: string;
   updatedAt: string;
 }

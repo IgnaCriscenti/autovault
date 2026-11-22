@@ -1,5 +1,5 @@
 // Ruta publica "/": catalogo con busqueda, filtros y paginacion (todo guardado en la URL).
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { getErrorMessage } from "../lib/api";
 import { useGetVehiclesQuery } from "../store/api";
 import { parseFilters, parsePage, toApiQuery, toSearchParams, type VehicleFilters as Filters } from "../lib/vehicle-filters";
@@ -29,9 +29,18 @@ export const Home = () => {
 
   return (
     <section className="flex flex-col gap-6">
-      <div>
-        <h2 className="text-2xl font-semibold">Catalogo de vehiculos</h2>
-        <p className="text-slate-500">Autos 0 km y usados seleccionados, listos para transferir.</p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Catalogo de vehiculos</h2>
+          <p className="text-slate-500">Autos 0 km y usados seleccionados, listos para transferir.</p>
+        </div>
+        {/* Sin sesion, ProtectedRoute manda a /login y despues vuelve a "Mis publicaciones". */}
+        <Link
+          to="/mis-publicaciones"
+          className="rounded-lg bg-brand-600 px-4 py-2 font-medium text-white shadow-sm transition hover:bg-brand-700"
+        >
+          Publica tu auto
+        </Link>
       </div>
 
       <VehicleFilters value={filters} onChange={handleFiltersChange} />

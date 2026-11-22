@@ -2,6 +2,7 @@
 import { skipToken } from "@reduxjs/toolkit/query";
 import { Link, useParams } from "react-router";
 import { getErrorMessage } from "../lib/api";
+import { useSession } from "../lib/auth-client";
 import { useGetVehicleByIdQuery } from "../store/api";
 import {
   BODY_LABELS,
@@ -24,6 +25,7 @@ export const VehicleDetail = () => {
   const { id } = useParams<{ id: string }>();
   // skipToken = no pedir nada si no hay id. Cada id es una entrada distinta en la cache.
   const { data: vehicle, isLoading, error } = useGetVehicleByIdQuery(id ?? skipToken);
+  const { data: session } = useSession();
 
   if (isLoading) return <p className="text-slate-500">Cargando vehiculo...</p>;
 
@@ -47,6 +49,14 @@ export const VehicleDetail = () => {
     ["Publicado", formatDate(vehicle.listedAt)],
   ];
 
+  // El dueño edita desde "Mis publicaciones"; un admin (si no es suyo) desde el panel.
+  const isOwner = session?.user.id === vehicle.owner;
+  const editPath = isOwner
+    ? `/mis-publicaciones?edit=${vehicle._id}`
+    : session?.user.role === "admin"
+      ? `/admin?edit=${vehicle._id}`
+      : null;
+
   return (
     <section className="flex flex-col gap-4">
       <BackLink />
@@ -68,6 +78,14 @@ export const VehicleDetail = () => {
             ))}
           </dl>
           {vehicle.description && <p className="border-t border-slate-100 pt-4 text-slate-700">{vehicle.description}</p>}
+          {editPath && (
+            <div className="flex items-center justify-between gap-2 rounded-lg bg-slate-50 p-3 text-sm">
+              <span className="text-slate-600">{isOwner ? "Esta es tu publicacion." : "Sos administrador."}</span>
+              <Link to={editPath} className="font-medium text-brand-700 underline">
+                Editar publicacion
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </section>

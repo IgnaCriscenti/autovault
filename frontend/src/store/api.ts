@@ -43,6 +43,11 @@ export const vehiclesApi = createApi({
       query: (params) => ({ url: "/vehicles", params }),
       providesTags: ["Vehicles"],
     }),
+    // Publicaciones del usuario logueado (requiere sesion).
+    getMyVehicles: build.query<Paginated<Vehicle>, VehiclesQuery>({
+      query: (params) => ({ url: "/vehicles/mine", params }),
+      providesTags: ["Vehicles"],
+    }),
     getBrands: build.query<string[], void>({
       query: () => ({ url: "/vehicles/brands" }),
       providesTags: ["Vehicles"],
@@ -68,6 +73,7 @@ export const vehiclesApi = createApi({
 
 export const {
   useGetVehiclesQuery,
+  useGetMyVehiclesQuery,
   useGetBrandsQuery,
   useGetVehicleByIdQuery,
   useCreateVehicleMutation,
