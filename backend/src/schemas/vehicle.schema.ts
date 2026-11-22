@@ -1,5 +1,13 @@
 import { z } from "zod";
-import { BODY_TYPES, FUEL_TYPES, MIN_YEAR, TRANSMISSIONS, maxYear } from "../constants/vehicle.js";
+import {
+  BODY_TYPES,
+  FUEL_TYPES,
+  MIN_YEAR,
+  SKETCHFAB_UID_REGEX,
+  TRANSMISSIONS,
+  extractSketchfabId,
+  maxYear,
+} from "../constants/vehicle.js";
 
 // Mensajes por defecto de Zod en español (para los campos sin mensaje propio, ej: limit=999).
 z.config(z.locales.es());
@@ -34,6 +42,7 @@ export const listVehiclesSchema = z
     minYear: optionalNumber("El año minimo"),
     maxYear: optionalNumber("El año maximo"),
     available: optionalBoolean,
+    has3d: optionalBoolean, // true = solo los que tienen modelo 3D de Sketchfab
   })
   .refine((q) => q.minPrice === undefined || q.maxPrice === undefined || q.minPrice <= q.maxPrice, {
     message: "El precio minimo no puede ser mayor al maximo",
@@ -69,6 +78,14 @@ export const createVehicleSchema = z.object({
   // "" permite borrar la imagen al editar.
   imageUrl: z
     .union([z.url({ protocol: /^https?$/, error: "La URL de la imagen no es valida" }), z.literal("")])
+    .optional(),
+  // Modelo 3D: acepta el id o la URL de Sketchfab (se normaliza al id). "" lo borra al editar.
+  sketchfabModelId: z
+    .string()
+    .transform(extractSketchfabId)
+    .refine((id) => id === "" || SKETCHFAB_UID_REGEX.test(id), {
+      message: "Pega la URL de un modelo de Sketchfab o su id (32 caracteres)",
+    })
     .optional(),
   available: z.boolean({ error: "Disponible debe ser true o false" }).optional(),
   // Acepta "2026-11-21" o un ISO completo.

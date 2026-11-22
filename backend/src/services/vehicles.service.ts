@@ -25,7 +25,8 @@ async function withOwnerNames(vehicles: (IVehicle & { _id: Types.ObjectId })[]):
 // El filtro se arma campo por campo desde input YA validado por Zod: nunca se pasa el input crudo
 // a Mongo (eso permitiria inyectar operadores como { "$gt": "" }).
 function buildFilter(input: ListVehiclesInput): QueryFilter<IVehicle> {
-  const { search, brand, fuelType, transmission, bodyType, minPrice, maxPrice, minYear, maxYear, available } = input;
+  const { search, brand, fuelType, transmission, bodyType, minPrice, maxPrice, minYear, maxYear, available, has3d } =
+    input;
   const filter: QueryFilter<IVehicle> = {};
 
   // Cada palabra debe aparecer en algun campo: "toyota hilux" encuentra la Toyota Hilux.
@@ -40,6 +41,8 @@ function buildFilter(input: ListVehiclesInput): QueryFilter<IVehicle> {
   if (transmission) filter.transmission = transmission;
   if (bodyType) filter.bodyType = bodyType;
   if (available !== undefined) filter.available = available;
+  if (has3d === true) filter.sketchfabModelId = { $exists: true, $nin: [null, ""] };
+  if (has3d === false) filter.$or = [{ sketchfabModelId: { $exists: false } }, { sketchfabModelId: { $in: [null, ""] } }];
   if (minPrice !== undefined || maxPrice !== undefined) {
     filter.price = { ...(minPrice !== undefined && { $gte: minPrice }), ...(maxPrice !== undefined && { $lte: maxPrice }) };
   }

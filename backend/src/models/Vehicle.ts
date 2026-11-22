@@ -21,6 +21,7 @@ export interface IVehicle {
   color?: string;
   description?: string;
   imageUrl?: string;
+  sketchfabModelId?: string; // modelo 3D para el visor (opcional)
   available: boolean;
   listedAt: Date;
   owner: string; // id (Better Auth) del usuario que publico el vehiculo
@@ -43,6 +44,8 @@ const vehicleSchema = new Schema<IVehicle>(
     color: { type: String, trim: true, maxlength: 30 },
     description: { type: String, trim: true, maxlength: 2000 },
     imageUrl: { type: String, trim: true },
+    // "" = sin modelo 3D (permite borrarlo al editar).
+    sketchfabModelId: { type: String, trim: true, match: /^([a-f0-9]{32})?$/ },
     available: { type: Boolean, default: true },
     listedAt: { type: Date, default: () => new Date() },
     // Se asigna SIEMPRE desde la sesion en el backend (nunca desde el body). Indexado para "mis publicaciones".

@@ -55,6 +55,7 @@ Recurso REST: `/api/v1/vehicles`
 | `color` | texto | Opcional |
 | `description` | texto | Opcional (máx. 2000) |
 | `imageUrl` | texto (URL) | Opcional, `http(s)://...` |
+| `sketchfabModelId` | texto | Opcional. Modelo 3D de [Sketchfab](https://sketchfab.com) para el visor; acepta la URL del modelo o su id (32 hex) y guarda el id |
 | `available` | booleano | `true` = disponible, `false` = vendido |
 | `listedAt` | fecha | Fecha de publicación |
 | `owner` | texto | Id del usuario que lo publicó (lo asigna el backend) |
@@ -95,6 +96,7 @@ Query params de `GET /api/v1/vehicles` (todos opcionales, validados con Zod):
 | `minPrice`, `maxPrice` | `maxPrice=30000` | Rango de precio (USD) |
 | `minYear`, `maxYear` | `minYear=2022` | Rango de año |
 | `available` | `available=true` | `true` = disponibles, `false` = vendidos |
+| `has3d` | `has3d=true` | `true` = solo con modelo 3D, `false` = sin modelo 3D |
 
 Respuesta: `{ data: Vehicle[], meta: { total, page, limit, totalPages } }`.
 
