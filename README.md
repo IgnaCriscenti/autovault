@@ -1,6 +1,6 @@
 # AutoVault
 
-Concesionaria online full stack. Cualquier visitante puede recorrer el catálogo de vehículos en venta y ver el detalle de cada uno; los administradores gestionan el catálogo desde un panel protegido.
+Concesionaria online full stack. Cualquier visitante puede recorrer el catálogo de vehículos en venta (con filtros, búsqueda y vista 3D interactiva de Sketchfab) y ver el detalle de cada uno. Los usuarios registrados publican sus autos y gestionan sus propias publicaciones; los administradores gestionan todo el catálogo y los usuarios desde un panel protegido. Además, un **asesor virtual** con IA (LangChain + Groq) ayuda a encontrar y comparar autos del catálogo.
 
 TP2 de Metodologías y Desarrollos Web (UAI), tomando como referencia el repositorio de la materia.
 
@@ -24,6 +24,28 @@ El frontend llama a la API por `/api` (rewrite del Static Site hacia el backend)
 
 Todo usuario nuevo (registro con email o login con GitHub/Google) recibe el rol `user`.
 
+## Checklist de la consigna
+
+| Requisito | Dónde |
+|---|---|
+| Entidad propia, ≥4 campos y ≥3 tipos | `Vehicle`: texto, número, booleano, fecha y enums ([tabla](#entidad-elegida-vehicle)) |
+| CRUD REST completo + validación Zod (400) | `/api/v1/vehicles` ([endpoints](#vehículos)) |
+| Códigos 201 / 400 / 401 / 403 / 404 | controllers + middlewares de auth, dueño y validación |
+| Better Auth: email/contraseña + GitHub, en Mongo | `backend/src/lib/auth.ts` (colecciones `user`, `session`, `account`) |
+| Roles `user` (por defecto) y `admin` | plugin `admin` de Better Auth ([roles](#roles-y-permisos)) |
+| Listado, detalle, login, registro, logout | páginas `Home`, `VehicleDetail`, `Login`, `Register`, menú de usuario |
+| Panel admin protegido por rol | `/admin` y `/admin/users` (`ProtectedRoute roles={["admin"]}`) |
+| Formularios React Hook Form + Zod | `VehicleForm`, `Login`, `Register`, `CreateUserForm` |
+| Sesión persistente con `useSession()` | `lib/auth-client.ts` |
+| Deploy Render: Web Service + Static Site, `/api/*` y `/*` | [Deploy en Render](#deploy-en-render) |
+| Login con GitHub en producción | OAuth App de producción |
+| **Opcional:** paginación, filtros y búsqueda | catálogo, "Mis publicaciones" y panel admin |
+| **Opcional:** cada usuario edita solo lo suyo | "Mis publicaciones" + `requireVehicleOwnerOrAdmin` |
+| **Opcional:** login con Google | Google OAuth publicado (cualquier cuenta) |
+| **Opcional:** página de admin para cambiar roles | `/admin/users` (`authClient.admin.setRole`) |
+| **Extra:** agente de IA (clases 14-15) | [Asesor virtual](#asesor-virtual-agente-de-ia) |
+| **Extra:** vista 3D de los autos | visor de Sketchfab en el detalle |
+
 ## Roles y permisos
 
 Se implementó el opcional **"cada usuario ve / edita solo sus propios registros"** (modalidad "Vendé tu auto"):
@@ -37,6 +59,8 @@ Se implementó el opcional **"cada usuario ve / edita solo sus propios registros
 | Gestionar usuarios y cambiar roles | ❌ | ❌ (403) | ✅ |
 
 El dueño (`owner`) se toma siempre de la sesión en el backend, nunca del body. El control "dueño o admin" está en el middleware `requireVehicleOwnerOrAdmin`; la gestión de usuarios es solo para `admin` (plugin admin de Better Auth).
+
+> **Sobre `requireRole("admin")`:** en la consigna base el rol `user` solo lee y las rutas de escritura llevan `authMiddleware + requireRole("admin")`. Al implementar este opcional (confirmado con el profesor: cada usuario crea, edita y elimina solo lo suyo y el admin todo), las rutas de escritura pasan a `authMiddleware + validateObjectId + requireVehicleOwnerOrAdmin`, que aplica la misma regla para el admin y agrega la del dueño. `requireRole` sigue disponible en `middlewares/auth.middleware.ts` y en el frontend las rutas `/admin` están protegidas por rol (un usuario común ve "Sin permisos").
 
 ## Entidad elegida: `Vehicle`
 
