@@ -1,1 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1d4ed8"/><path d="M12 38l5-12c1-3 3-4 6-4h18c3 0 5 1 6 4l5 12v8a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2H20v2a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z" fill="#fff"/><circle cx="21" cy="37" r="3" fill="#1d4ed8"/><circle cx="43" cy="37" r="3" fill="#1d4ed8"/><path d="M19 32l3-7h20l3 7z" fill="#1d4ed8" opacity=".35"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="g" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7fb0d6"/>
+      <stop offset="0.55" stop-color="#4a7fae"/>
+      <stop offset="1" stop-color="#2c5680"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#eef4fa"/>
+  <g transform="translate(4 3) scale(0.875)">
+    <path d="M14 55V24.5L22.5 11H41.5L50 24.5V55" stroke="url(#g)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M5 44.5V40.5L10 35.5L21.5 33L28 26.5H38.5L46.5 33L56.5 35L59.5 40V44.5" stroke="#34465a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M5 44.5H11.5M24.5 44.5H39.5M52.5 44.5H59.5" stroke="#34465a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M11.5 44.5A6.5 6.5 0 0 1 24.5 44.5M39.5 44.5A6.5 6.5 0 0 1 52.5 44.5" stroke="#34465a" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="18" cy="46" r="3.8" fill="#34465a"/>
+    <circle cx="46" cy="46" r="3.8" fill="#34465a"/>
+    <circle cx="32" cy="36.5" r="5" fill="#ffffff" stroke="url(#g)" stroke-width="2.8"/>
+  </g>
+</svg>
